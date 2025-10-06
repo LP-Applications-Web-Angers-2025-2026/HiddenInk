@@ -1,12 +1,34 @@
 #include <iostream>
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-int main()
-{
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+ using namespace std;
 
+int main() {
+
+    cout << "Bienvenue dans le programme de stéganographie!" << endl;
+    
+    cout << "Menu:" << endl;
+    
+
+    int userChoice;
+    cin >> userChoice;
+    switch (userChoice)
+    {
+    case 1:
+        cout << "1. Insérer un message dans une image" << endl;
+        break;
+    case 2:
+        cout << "2. Extraire un message d'une image" << endl;
+        break;
+    case 3:
+        cout << "3. Comparer la qualité d'une image" << endl;
+        break;
+    case 4:
+        cout << "4. Quitter" << endl;
+        break;
+
+    default:
+        break;
+    }
+    
     return 0;
-    // TIP See CLion help at <a href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>. Also, you can try interactive lessons for CLion by selecting 'Help | Learn IDE Features' from the main menu.
 }
