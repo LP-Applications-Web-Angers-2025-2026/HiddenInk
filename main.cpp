@@ -5,7 +5,7 @@
 int main() {
 
     cout << "Bienvenue dans le programme de stéganographie!" << endl;
-    
+
     cout << "Menu:" << endl;
     
 
@@ -29,6 +29,14 @@ int main() {
     default:
         break;
     }
+
+    if(userChoice > 4 || userChoice < 1){
+        cout << "Choix invalide. Veuillez réessayer." << endl;
+    }
+    else{
+        cout << "Vous avez choisi l'option " << userChoice << endl;
+    }
+
     
     return 0;
 }
