@@ -1,42 +1,52 @@
 #include <iostream>
+#include <limits>
 
- using namespace std;
+using namespace std;
 
 int main() {
 
     cout << "Bienvenue dans le programme de stéganographie!" << endl;
 
-    cout << "Menu:" << endl;
-    
-
-    int userChoice;
-    cin >> userChoice;
-    switch (userChoice)
-    {
-    case 1:
+    int userChoice = 0;
+    do {
+        cout << "\nMenu:\n";
         cout << "1. Insérer un message dans une image" << endl;
-        break;
-    case 2:
         cout << "2. Extraire un message d'une image" << endl;
-        break;
-    case 3:
         cout << "3. Comparer la qualité d'une image" << endl;
-        break;
-    case 4:
         cout << "4. Quitter" << endl;
-        break;
 
-    default:
-        break;
-    }
+        cout << "Entrez votre choix (1-4) : ";
+        if (!(cin >> userChoice)) {
+            
+            cin.clear();
+            cout << "Entrée invalide. Veuillez entrer un nombre entre 1 et 4." << endl;
+            continue;
+        }
 
-    if(userChoice > 4 || userChoice < 1){
-        cout << "Choix invalide. Veuillez réessayer." << endl;
-    }
-    else{
-        cout << "Vous avez choisi l'option " << userChoice << endl;
-    }
+        switch (userChoice)
+        {
+        case 1:
+            cout << "-> Vous avez choisi : Insérer un message dans une image." << endl;
+            // faire fonction
+            
+            break;
+        case 2:
+            cout << "-> Vous avez choisi : Extraire un message d'une image." << endl;
+            // faire fonction
+            break;
+        case 3:
+            cout << "-> Vous avez choisi : Comparer la qualité d'une image." << endl;
+            // faire fonction
+            break;
+        case 4:
+            cout << "Au revoir !" << endl;
+            break;
+        default:
+            cout << "Choix invalide. Veuillez sélectionner une option entre 1 et 4." << endl;
+            break;
+        }
 
-    
+    } while (userChoice != 4);
+
     return 0;
 }
