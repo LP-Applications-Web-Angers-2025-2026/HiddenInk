@@ -1,52 +1,60 @@
-#include <iostream>
-#include <limits>
-
-using namespace std;
+#include <filesystem>
+#include "stegano.hpp"
 
 int main() {
+    std::filesystem::path root = std::filesystem::current_path().parent_path();
+    string inFile = (root / "demo_in.txt").string();
+    string outFile = (root / "demo_out.txt").string();
 
-    cout << "Bienvenue dans le programme de stéganographie!" << endl;
+    cout << "=== MENU STEGANOGRAPHIE ===\n";
+    cout << "1. Cacher un message dans demo_out.txt\n";
+    cout << "2. Extraire un message depuis demo_out.txt\n";
+    cout << "3. Quitter\n";
+    cout << "-----------------------------\n";
+    cout << "Choix : ";
 
-    int userChoice = 0;
-    do {
-        cout << "\nMenu:\n";
-        cout << "1. Insérer un message dans une image" << endl;
-        cout << "2. Extraire un message d'une image" << endl;
-        cout << "3. Comparer la qualité d'une image" << endl;
-        cout << "4. Quitter" << endl;
+    int choix;
+    cin >> choix;
+    cin.ignore();
 
-        cout << "Entrez votre choix (1-4) : ";
-        if (!(cin >> userChoice)) {
-            
-            cin.clear();
-            cout << "Entrée invalide. Veuillez entrer un nombre entre 1 et 4." << endl;
-            continue;
+    if (choix == 1) {
+        string contenu;
+        cout << "\nTexte du fichier support (demo_in.txt) :\n> ";
+        getline(cin, contenu);
+        ecrireFichier(inFile, contenu);
+
+        auto bytes = lireFichier(inFile);
+        if (bytes.empty()) {
+            cerr << "Erreur : impossible de lire demo_in.txt.\n";
+            return 1;
         }
 
-        switch (userChoice)
-        {
-        case 1:
-            cout << "-> Vous avez choisi : Insérer un message dans une image." << endl;
-            // faire fonction
-            
-            break;
-        case 2:
-            cout << "-> Vous avez choisi : Extraire un message d'une image." << endl;
-            // faire fonction
-            break;
-        case 3:
-            cout << "-> Vous avez choisi : Comparer la qualité d'une image." << endl;
-            // faire fonction
-            break;
-        case 4:
-            cout << "Au revoir !" << endl;
-            break;
-        default:
-            cout << "Choix invalide. Veuillez sélectionner une option entre 1 et 4." << endl;
-            break;
+        string secret;
+        cout << "\nMessage secret à cacher :\n> ";
+        getline(cin, secret);
+
+        int bitsPerByte = 8; // chaque octet du fichier stocke 1 octet du message
+        embedLSB(bytes, secret, bitsPerByte);
+
+        writeFileBytes(outFile, bytes);
+
+        cout << "\n✅ Message caché dans demo_out.txt avec succès.\n";
+    }
+    else if (choix == 2) {
+        auto bytes = lireFichier(outFile);
+        if (bytes.empty()) {
+            cerr << "Erreur : impossible de lire demo_out.txt.\n";
+            return 1;
         }
 
-    } while (userChoice != 4);
+        int bitsPerByte = 8;
+        string extrait = extractLSB(bytes, bitsPerByte);
+
+        cout << "\n💬 Message extrait : \"" << extrait << "\"\n";
+    }
+    else {
+        cout << "Fin du programme.\n";
+    }
 
     return 0;
 }
