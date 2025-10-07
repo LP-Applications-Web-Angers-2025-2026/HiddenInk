@@ -1,60 +1,40 @@
+#include <iostream>
+#include <string>
 #include <filesystem>
-#include "stegano.hpp"
+#include "stegano_image.hpp"
 
-int main() {
-    std::filesystem::path root = std::filesystem::current_path().parent_path();
-    string inFile = (root / "demo_in.txt").string();
-    string outFile = (root / "demo_out.txt").string();
+using namespace std;
+namespace fs=std::filesystem;
 
-    cout << "=== MENU STEGANOGRAPHIE ===\n";
-    cout << "1. Cacher un message dans demo_out.txt\n";
-    cout << "2. Extraire un message depuis demo_out.txt\n";
-    cout << "3. Quitter\n";
-    cout << "-----------------------------\n";
-    cout << "Choix : ";
+int main(){
+    while(true){
+        cout<<"\n=== MENU ===\n1. Cacher\n2. Extraire\n3. Quitter\nChoix : ";
+        int ch; cin>>ch; cin.ignore();
 
-    int choix;
-    cin >> choix;
-    cin.ignore();
+        if(ch==1){
+            string src,dst,msg; int bpc;
+            cout<<"Image source : "; getline(cin,src);
+            if(!fs::exists(src)){cerr<<"Fichier inexistant !\n"; continue;}
+            cout<<"Image sortie (.png) : "; getline(cin,dst);
+            cout<<"Message : "; getline(cin,msg);
+            cout<<"Bits par canal (1-4) : "; cin>>bpc; cin.ignore();
 
-    if (choix == 1) {
-        string contenu;
-        cout << "\nTexte du fichier support (demo_in.txt) :\n> ";
-        getline(cin, contenu);
-        ecrireFichier(inFile, contenu);
-
-        auto bytes = lireFichier(inFile);
-        if (bytes.empty()) {
-            cerr << "Erreur : impossible de lire demo_in.txt.\n";
-            return 1;
+            int w,h,c; auto img=readImage(src,w,h,c);
+            if(!img) continue;
+            embedMessage(img,w,h,c,msg,bpc);
+            if(writeImage(dst,img,w,h,c)) cout<<"✅ Message caché !\n";
+            stbi_image_free(img);
         }
-
-        string secret;
-        cout << "\nMessage secret à cacher :\n> ";
-        getline(cin, secret);
-
-        int bitsPerByte = 8; // chaque octet du fichier stocke 1 octet du message
-        embedLSB(bytes, secret, bitsPerByte);
-
-        writeFileBytes(outFile, bytes);
-
-        cout << "\n✅ Message caché dans demo_out.txt avec succès.\n";
-    }
-    else if (choix == 2) {
-        auto bytes = lireFichier(outFile);
-        if (bytes.empty()) {
-            cerr << "Erreur : impossible de lire demo_out.txt.\n";
-            return 1;
+        else if(ch==2){
+            string src; int bpc;
+            cout<<"Image à lire : "; getline(cin,src);
+            cout<<"Bits par canal utilisés : "; cin>>bpc; cin.ignore();
+            int w,h,c; auto img=readImage(src,w,h,c);
+            if(!img) continue;
+            string msg=extractMessage(img,w,h,c,bpc);
+            cout<<"💬 Message extrait : "<<msg<<"\n";
+            stbi_image_free(img);
         }
-
-        int bitsPerByte = 8;
-        string extrait = extractLSB(bytes, bitsPerByte);
-
-        cout << "\n💬 Message extrait : \"" << extrait << "\"\n";
+        else break;
     }
-    else {
-        cout << "Fin du programme.\n";
-    }
-
-    return 0;
 }
