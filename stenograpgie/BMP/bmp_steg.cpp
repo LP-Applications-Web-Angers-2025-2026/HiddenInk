@@ -1,3 +1,4 @@
+#include "bmp_steg.h"
 #include <iostream>
 #include <fstream>
 #include <vector>

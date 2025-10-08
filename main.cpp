@@ -1,4 +1,4 @@
-#include "stenograpgie/BMP/bmp_steg.cpp"
+#include "stenograpgie/BMP/bmp_steg.h"
 
 int main()
 {
