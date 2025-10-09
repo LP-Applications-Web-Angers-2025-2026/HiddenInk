@@ -1,7 +1,12 @@
 #ifndef HIDDENINK_BMP_STEG_H
 #define HIDDENINK_BMP_STEG_H
 
+#include <iostream>
+#include <ostream>
+
+using namespace std;
+
 // Déclaration de la fonction (prototype)
-int bmpConvert();
+int bmpConvert( string);
 
 #endif //HIDDENINK_BMP_STEG_H
