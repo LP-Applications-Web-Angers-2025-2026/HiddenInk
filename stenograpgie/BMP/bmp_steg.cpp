@@ -30,14 +30,29 @@ using namespace std;
 // Bit 6       : 0xBF = 1011 1111 = 191 --> data[i] &= 0xBF;
 // Bit 7 (MSB) : 0x7F = 0111 1111 = 127 --> data[i] &= 0x7F;
 
+
 string BinForLetter(char letter) {return bitset<8>(static_cast<unsigned char>(letter)).to_string();}
+
+string binaireVersTexte(const string& binaire) {
+    cout << "Char : " << binaire << endl;
+    string texte;
+    for (size_t i = 0; i < binaire.size(); i += 8) {
+        string octet = binaire.substr(i, 8);
+        bitset<8> b(octet);
+        char caractere = static_cast<char>(b.to_ulong());
+        texte += caractere;
+    }
+    return texte;
+}
 
 int bmpConvert(string message) {
     int taillechaine = message.size();
 
     string TabBinascii[taillechaine + 1];
 
-    for (int i=0; i<taillechaine; i++) {TabBinascii[i] = BinForLetter(message[i]);}
+    for (int i=0; i<taillechaine; i++) {
+        TabBinascii[i] = BinForLetter(message[i]);
+    }
 
     // Taille de l'entète format BMP
     size_t headerSize = 54;
@@ -55,12 +70,12 @@ int bmpConvert(string message) {
     if (!file)
     {
         cerr << "Erreur : impossible d'ouvrir " << inputPath << std::endl;
-        return 1;
+        return ;
     }
 
     // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
     vector<unsigned char> data((std::istreambuf_iterator<char>(file)),
-                                    std::istreambuf_iterator<char>());
+                                std::istreambuf_iterator<char>());
 
     // Fermer le fichier
     file.close();
@@ -69,8 +84,6 @@ int bmpConvert(string message) {
 
     // limiter à 64 octets
     size_t n = std::min<size_t>(64, data.size() - headerSize);
-
-
 
     // Affichage avant modification
     cout << "\n--- Bits forts | Bits faibles avant modification ---\n";
@@ -81,12 +94,12 @@ int bmpConvert(string message) {
         if ((i+1) % 8 == 0) cout << "\n";
     }
 
-
     // Convertit et stock le message en binaire dans messageBinaire
     string messageBinaire;
-    for (char c : message) {
-        bitset<8> binaire(c);
-        messageBinaire += binaire.to_string();
+    for (int i = 0; i < taillechaine; ++i) {
+        // Prend chaque caractère et le convertit en 8 bits continus
+        bitset<8> b(message[i]);
+        messageBinaire += b.to_string(); // Pas d'espaces, juste les bits
     }
 
     // Change le LSB de chaque octet de l'image par chaque bit du message
@@ -109,15 +122,53 @@ int bmpConvert(string message) {
     ofstream outFile("../out/tigre_LSB.bmp", ios::binary);
     outFile.write(reinterpret_cast<char*>(modifiedData.data()), modifiedData.size());
     outFile.close();
-
-    return 0;
 }
 
 
 string bmpRecup(string inputPath) {
 
+    // Taille de l'entète format BMP
+    size_t headerSize = 54;
 
+    // Ouverture du fichier en mode binaire
 
+    ifstream file(inputPath, std::ios::binary);
+    if (!file)
+    {
+        cerr << "Erreur : impossible d'ouvrir " << inputPath << std::endl;
+        return "ERROR";
+    }
 
-    return " lol ";
+    // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
+    vector<unsigned char> data((std::istreambuf_iterator<char>(file)),
+                                    std::istreambuf_iterator<char>());
+
+    // Fermer le fichier
+    file.close();
+
+    // limiter à 64 octets
+    size_t n = std::min<size_t>(64, data.size() - headerSize);
+
+    string message;
+
+    /**
+     * 11101111 11111111 00001111 00110011 00001111 11111111
+     *  1           1        1       1           1    1
+     */
+
+    // Lire tous les LSB (1 bit par octet)
+    string messageBinaire;
+    size_t bitsALire = 64; // 🔹 Limite à 60 bits
+    size_t maxIndex = headerSize + bitsALire;
+
+    // 🔸 Lire les bits faibles
+    for (size_t i = headerSize; i < headerSize + bitsALire; ++i) {
+        char bitLSB = (data[i] & 1) ? '1' : '0'; // plus sûr que bitset
+        messageBinaire += bitLSB;
+    }
+
+    // 🔸 Conversion
+    message = binaireVersTexte(messageBinaire);
+
+    return message;
 }

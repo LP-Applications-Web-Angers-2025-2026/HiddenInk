@@ -41,3 +41,5 @@
 *.dwo
 cmake-build-debug
 .idea
+out/*.bmp
+
