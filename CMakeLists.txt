@@ -7,4 +7,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(untitled
         main.cpp
         stb_impl.cpp
+        stegano_image.hpp
 )
