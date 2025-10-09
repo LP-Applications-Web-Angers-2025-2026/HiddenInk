@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ostream>
-#include "stenograpgie/BMP/bmp_steg.h"
+#include "stenograpgie/BMP/bmp_convert.h"
+#include "stenograpgie/BMP/bmp_Recuperation.h"
 
 using namespace std;
 

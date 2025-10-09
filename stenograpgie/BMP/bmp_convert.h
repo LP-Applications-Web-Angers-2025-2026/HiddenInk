@@ -7,6 +7,6 @@
 using namespace std;
 
 // Déclaration de la fonction (prototype)
-int bmpConvert( string);
+void bmpConvert( string);
 
 #endif //HIDDENINK_BMP_STEG_H
