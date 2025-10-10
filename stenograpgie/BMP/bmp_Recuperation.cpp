@@ -45,22 +45,31 @@ string bmpRecup(const string& inputPath) {
     }
 
     // Comparer avec la chaîne attendue
-    string chaineAttendue = getSignatureBinary();
+    string signatureAttendue = getSignatureBinary();
 
-    if (bitsLus != chaineAttendue){
+    if (bitsLus != signatureAttendue){
         return "2";
     }
 
-    // Lire tous les LSB (1 bit par octet)
-    size_t bitsALire = 256; // 🔹 Limite à 60 bits
-    size_t maxIndex = headerSize + bitsALire;
+    // ---- On recherche les balises ouvrantes et fermantes ----
 
-    // Lire les bits faibles
-    for (size_t i = headerSize; i < headerSize + bitsALire; ++i) {
-        char bitLSB = (data[i] & 1) ? '1' : '0'; // plus sûr que bitset
-        messageBinaire += bitLSB;
+    // Compater avec les balises ouvrantes et fermantes
+    string baliseOuvrante = getBaliseBinary(true);
+    string baliseFermante = getBaliseBinary(false);
+
+    bitsLus.clear();
+    for (size_t i = headerSize; i < data.size(); ++i) {
+        char bit = (data[i] & 0x01) + '0';
+        bitsLus += bit;
     }
 
+    size_t posOuv = bitsLus.find(getBaliseBinary(true));
+    size_t posFerm = bitsLus.find(getBaliseBinary(false), posOuv);
+
+    messageBinaire = bitsLus.substr(
+    posOuv + getBaliseBinary(true).size(),
+    posFerm - (posOuv + getBaliseBinary(true).size())
+);
     // Conversion et retour
     return binaireVersTexte(messageBinaire);
 
