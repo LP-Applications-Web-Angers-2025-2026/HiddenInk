@@ -59,11 +59,19 @@ void bmpConvert(string message) {
 
     // Convertit et stock le message en binaire dans messageBinaire
     string messageBinaire;
+    messageBinaire += signatureBinaire;
+
+    //balise ouverture
+    messageBinaire += getBaliseBinary(true);
+
     for (int i = 0; i < taillechaine; ++i) {
         // Prend chaque caractère et le convertit en 8 bits continus
         bitset<8> b(message[i]);
-        messageBinaire += b.to_string(); // Pas d'espaces, juste les bits
+        messageBinaire += b.to_string();
     }
+
+    // balise fermantes
+    messageBinaire += getBaliseBinary(false);
 
     // Change le LSB de chaque octet de l'image par chaque bit du message
     vector<unsigned char> modifiedData = data;
