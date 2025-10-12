@@ -43,8 +43,7 @@ void bmpConvert(string message) {
     // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
     vector<unsigned char> data((std::istreambuf_iterator<char>(file)),
                                 std::istreambuf_iterator<char>());
-
-    // Fermer le fichier
+    // Femeture du fichier
     file.close();
 
     // On limite l'utilisations des octets
@@ -53,7 +52,6 @@ void bmpConvert(string message) {
     for (size_t i = 0; i < n; ++i)
     {
         bitset<8> bits(data[headerSize + i]);
-        cout << bits.to_string().substr(0,4) << "|" << bits.to_string().substr(4,4) << " ";
         if ((i+1) % 8 == 0) cout << "\n";
     }
 
@@ -76,21 +74,12 @@ void bmpConvert(string message) {
     // Change le LSB de chaque octet de l'image par chaque bit du message
     vector<unsigned char> modifiedData = data;
     for (size_t i = 0; i < messageBinaire.size(); ++i){
-        modifiedData[headerSize + i] &= 0xFE; // Met à 0 le LSB
-        modifiedData[headerSize + i] |= (messageBinaire[i] - '0'); // Change le LSB avec le bit du message
-    }
-
-    // Affichage après modification
-    cout << "\n--- Bits forts | Bits faibles apres modification ---\n";
-    for (size_t i = 0; i < n; ++i)
-    {
-        bitset<8> bits(modifiedData[headerSize + i]);
-        cout << bits.to_string().substr(0,4) << "|" << bits.to_string().substr(4,4) << " ";
-        if ((i+1) % 8 == 0) cout << "\n";
+        modifiedData[headerSize + i] &= 0xFE;
+        modifiedData[headerSize + i] |= (messageBinaire[i] - '0');
     }
 
     // Sauvegarder l'image modifiée
-    ofstream outFile("../out/tigre_LSB.bmp", ios::binary);
+    ofstream outFile(outputPath, ios::binary);
     outFile.write(reinterpret_cast<char*>(modifiedData.data()), modifiedData.size());
     outFile.close();
 }

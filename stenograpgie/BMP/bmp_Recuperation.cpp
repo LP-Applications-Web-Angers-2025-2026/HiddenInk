@@ -66,11 +66,17 @@ string bmpRecup(const string& inputPath) {
     size_t posOuv = bitsLus.find(getBaliseBinary(true));
     size_t posFerm = bitsLus.find(getBaliseBinary(false), posOuv);
 
+    // Vérifie si les deux balises existent
+    if (posOuv == string::npos || posFerm == string::npos) {
+        return "3";
+    }
+
+    // On extrait le message entre les balises
     messageBinaire = bitsLus.substr(
     posOuv + getBaliseBinary(true).size(),
     posFerm - (posOuv + getBaliseBinary(true).size())
 );
+
     // Conversion et retour
     return binaireVersTexte(messageBinaire);
-
-}
+};
