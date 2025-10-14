@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include "stegano_imageinimage.hpp"
-#include "stegano_text.hpp"
-#include "image_analysis.hpp"
+#include "stegano/stegano_imageinimage.hpp"
+#include "stegano/stegano_text.hpp"
+#include "analysis/image_analysis.hpp"
 
 void afficherAide() {
     std::cout << "=== STEGANOGRAPHIE AVANCEE ===\n\n";

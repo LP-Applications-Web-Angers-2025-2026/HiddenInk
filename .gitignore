@@ -1,7 +1,37 @@
-# Prerequisites
-*.d
+# ============================================
+# HiddenInk - Fichiers à ignorer
+# ============================================
 
-# Compiled Object files
+# ===== Dossiers de build =====
+build/
+cmake-build-*/
+bin/
+lib/
+
+# ===== IDEs =====
+# CLion
+.idea/
+cmake-build-debug/
+cmake-build-release/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# ===== CMake =====
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+*.cmake
+!CMakeLists.txt
+
+# ===== Compiled Object files =====
 *.slo
 *.lo
 *.o
@@ -37,5 +67,33 @@
 *.out
 *.app
 
-# debug information files
+# Debug information files
 *.dwo
+
+# ===== Fichiers temporaires =====
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ===== OS =====
+# Windows
+Thumbs.db
+desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# ===== Images de test générées =====
+examples/img/output/
+examples/img/test_*.png
+examples/img/stego_*.png
+
+# ===== Fichiers de logs =====
+*.log

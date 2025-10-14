@@ -1,101 +1,199 @@
-# HiddenInk 🖼️🔒
+# 🖼️🔒 HiddenInk# HiddenInk 🖼️🔒
 
-Application C++ de stéganographie avancée permettant de cacher et extraire des images et des messages textes dans des images PNG, avec des outils d'analyse.
 
-## ✨ Fonctionnalités
 
-### 🖼️ Image-in-Image
+Application C++ de stéganographie avancée permettant de cacher et extraire des images et des messages textes dans des images PNG, avec des outils d'analyse.Application C++ de stéganographie avancée permettant de cacher et extraire des images et des messages textes dans des images PNG, avec des outils d'analyse.
+
+
+
+## 🚀 Démarrage rapide## ✨ Fonctionnalités
+
+
+
+### Compilation### 🖼️ Image-in-Image
+
 - **Cacher une image** dans une autre image
-- **Extraire une image** cachée
-- Détection automatique des paramètres d'encodage
-- Redimensionnement automatique avec interpolation bilinéaire
+
+```bash- **Extraire une image** cachée
+
+# Créer le dossier de build- Détection automatique des paramètres d'encodage
+
+mkdir build && cd build- Redimensionnement automatique avec interpolation bilinéaire
+
 - Limite stricte de 2 bits/canal pour préserver la qualité visuelle
 
-### 📝 Text-in-Image
+# Configurer avec CMake
+
+cmake ..### 📝 Text-in-Image
+
 - **Cacher un message texte** dans une image
-- **Extraire un message texte** avec validation
-- Détection automatique du nombre de bits utilisés
+
+# Compiler- **Extraire un message texte** avec validation
+
+cmake --build .- Détection automatique du nombre de bits utilisés
+
 - Gestion des capacités et statistiques d'utilisation
 
-### 🔍 Analyse d'Images
-- **Comparaison MSE/PSNR** entre image originale et stéganographiée
+# L'exécutable se trouve dans build/bin/
+
+./bin/hiddenink### 🔍 Analyse d'Images
+
+```- **Comparaison MSE/PSNR** entre image originale et stéganographiée
+
 - **Analyse d'histogramme** par canal (RGB/RGBA)
-- **Détection de stéganographie** via analyse des LSB
+
+### Utilisation simple- **Détection de stéganographie** via analyse des LSB
+
 - Statistiques détaillées (min, max, moyenne, écart-type)
 
-## 🛠️ Compilation
+```bash
+
+# Cacher un message texte## 🛠️ Compilation
+
+./bin/hiddenink hide-text photo.png "Mon message secret" output.png
 
 ```bash
-mkdir build && cd build
-cmake ..
+
+# Extraire le messagemkdir build && cd build
+
+./bin/hiddenink extract-text output.png message.txtcmake ..
+
 make
-```
 
-## 🚀 Utilisation
+# Mode interactif```
 
-### Mode interactif
+./bin/hiddenink
 
-Lancez simplement le programme sans arguments :
+```## 🚀 Utilisation
 
-```bash
+
+
+## 📚 Documentation complète### Mode interactif
+
+
+
+- **[Documentation complète](docs/README.md)** - Toutes les fonctionnalités et détails techniquesLancez simplement le programme sans arguments :
+
+- **[Exemples d'utilisation](docs/EXAMPLES.md)** - Scénarios pratiques et cas d'usage
+
+- **[Licence](docs/LICENSE)** - Termes et conditions```bash
+
 ./main
-```
 
-Vous verrez alors un menu avec 7 options :
-1. Cacher une image dans une image
-2. Extraire une image cachée
-3. Cacher un message texte dans une image
-4. Extraire un message texte
+## ✨ Fonctionnalités principales```
+
+
+
+- 🖼️ **Image-in-Image** - Cacher une image dans une autreVous verrez alors un menu avec 7 options :
+
+- 📝 **Text-in-Image** - Cacher des messages textes1. Cacher une image dans une image
+
+- 🔍 **Analyse MSE/PSNR** - Mesurer la qualité de l'image stéganographiée2. Extraire une image cachée
+
+- 📊 **Analyse d'histogramme** - Distribution des valeurs de pixels3. Cacher un message texte dans une image
+
+- 🕵️ **Détection de stéganographie** - Analyse des LSB4. Extraire un message texte
+
 5. Comparer deux images (MSE/PSNR)
-6. Analyser l'histogramme d'une image
+
+## 📁 Structure du projet6. Analyser l'histogramme d'une image
+
 7. Détecter une éventuelle stéganographie
 
-### Mode ligne de commande
-
-#### Cacher une image
-```bash
-./main hide-image carrier.png secret.png output.png
 ```
 
-#### Extraire une image
-```bash
-./main extract-image stego.png extracted.png
-```
+HiddenInk/### Mode ligne de commande
 
-#### Cacher un texte
-```bash
+├── src/                    # Code source
+
+│   ├── main.cpp           # Point d'entrée#### Cacher une image
+
+│   └── stb_impl.cpp       # Implémentation STB```bash
+
+├── include/               # Headers./main hide-image carrier.png secret.png output.png
+
+│   ├── stegano/          # Modules de stéganographie```
+
+│   ├── analysis/         # Outils d'analyse
+
+│   └── external/         # Bibliothèques externes (STB)#### Extraire une image
+
+├── docs/                  # Documentation```bash
+
+├── examples/              # Fichiers d'exemple./main extract-image stego.png extracted.png
+
+│   └── img/              # Images de test```
+
+├── build/                 # Dossier de compilation (généré)
+
+└── CMakeLists.txt        # Configuration CMake#### Cacher un texte
+
+``````bash
+
 ./main hide-text carrier.png "Mon message secret" output.png
+
+## 🛠️ Prérequis```
+
+
+
+- **CMake** 3.20 ou supérieur#### Extraire un texte
+
+- **Compilateur C++20** (GCC 10+, Clang 10+, MSVC 2019+)```bash
+
+- **Windows, Linux ou macOS**./main extract-text stego.png
+
 ```
 
-#### Extraire un texte
-```bash
-./main extract-text stego.png
-```
+## 🎯 Exemple complet
 
 #### Comparer deux images
-```bash
-./main compare original.png stego.png
-```
 
-Affiche :
-- MSE (Mean Squared Error)
+```bash```bash
+
+# 1. Cacher une image dans une autre./main compare original.png stego.png
+
+./bin/hiddenink hide-image examples/img/carrier.png examples/img/secret.png output.png```
+
+
+
+# 2. Vérifier la qualitéAffiche :
+
+./bin/hiddenink compare examples/img/carrier.png output.png- MSE (Mean Squared Error)
+
 - PSNR (Peak Signal-to-Noise Ratio)
-- Pourcentage de pixels modifiés
-- Interprétation de la qualité
+
+# 3. Extraire l'image cachée- Pourcentage de pixels modifiés
+
+./bin/hiddenink extract-image output.png extracted.png- Interprétation de la qualité
+
+```
 
 #### Analyser l'histogramme
-```bash
+
+## 📄 Licence```bash
+
 ./main histogram image.png
-```
 
-Affiche :
+MIT License - voir [docs/LICENSE](docs/LICENSE) pour plus de détails.```
+
+
+
+## 🙏 CréditsAffiche :
+
 - Distribution des valeurs par canal
-- Statistiques (min, max, moyenne, écart-type)
-- Top 5 des valeurs les plus fréquentes
 
-#### Détecter la stéganographie
+- [STB Libraries](https://github.com/nothings/stb) par Sean Barrett- Statistiques (min, max, moyenne, écart-type)
+
+- Développé à l'Université d'Angers (2025-2026)- Top 5 des valeurs les plus fréquentes
+
+
+
+---#### Détecter la stéganographie
+
 ```bash
-./main detect image.png
+
+**Note:** Pour une documentation détaillée, consultez [docs/README.md](docs/README.md)./main detect image.png
+
 ```
 
 Analyse la distribution des LSB pour détecter d'éventuelles anomalies.
