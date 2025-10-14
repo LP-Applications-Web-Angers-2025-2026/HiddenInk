@@ -1,0 +1,12 @@
+Ceci est un message de test pour la stéganographie.
+
+Ce fichier peut être utilisé avec la commande :
+./bin/hiddenink hide-text image.png "Votre message secret" output.png
+
+Testez également :
+- Messages courts
+- Messages longs avec plusieurs lignes
+- Caractères spéciaux : é à ù ç € £ ¥
+- Emojis (si supportés) : 🔒 🖼️ 📝
+
+Bon test !
