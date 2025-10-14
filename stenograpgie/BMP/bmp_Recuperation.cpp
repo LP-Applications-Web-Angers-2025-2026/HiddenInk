@@ -37,6 +37,7 @@ string bmpRecup(const string& inputPath)
         bitsLus += (octet & 0x01) + '0';
     }
 
+    // --- Vérification de la signature ---
     const string signatureAttendue = getSignatureBinary();
     if (bitsLus != signatureAttendue)
         return "2";

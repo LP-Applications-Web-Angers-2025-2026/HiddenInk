@@ -111,9 +111,7 @@ string getBalise(bool ouverture) {
 
     // 1 = ouverture
     // 0 fermeture
-
     string balise;
-
     if (ouverture) { balise = "~{&";}
     else { balise = "&}~"; }
 

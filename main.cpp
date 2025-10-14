@@ -11,7 +11,7 @@ using namespace std;
 int main()
 {
     string messageDecode;
-    string pathFile = "../img_banque/PNG/test.png";
+    string pathFile = "../img_banque/BMP/test.bmp";
 
     if (pathFile == "" || !std::filesystem::exists(pathFile))
     {
