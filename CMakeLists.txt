@@ -3,4 +3,9 @@ project(HiddenInk)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(HiddenInk main.cpp)
+add_executable(HiddenInk main.cpp
+        stenograpgie/BMP/bmp_convert.cpp
+        stenograpgie/BMP/bmp_Recuperation.cpp
+        stenograpgie/BMP/bmp_Recuperation.h
+        stenograpgie/utils/utils_bin.cpp
+        stenograpgie/utils/utils_bin.h)

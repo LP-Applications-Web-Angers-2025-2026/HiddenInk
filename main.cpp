@@ -1,12 +1,40 @@
+#include <filesystem>
 #include <iostream>
+#include <fstream>
+#include <ostream>
+#include "stenograpgie/BMP/bmp_convert.h"
+#include "stenograpgie/BMP/bmp_Recuperation.h"
+#include "stenograpgie/utils/utils_bin.h"
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+using namespace std;
+
 int main()
 {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+    string messageDecode;
+    string pathFile = "../img_banque/BMP/test.bmp";
+
+    if (pathFile == "" || !std::filesystem::exists(pathFile))
+    {
+        cout << "Erreur, le fichier n'existe pas." << endl;
+    }
+    else
+    {
+        bmpConvert(pathFile);
+    }
+
+    string path = "../out/tigre_LSB.bmp";
+
+    messageDecode = bmpRecup(path);
+
+     if (messageDecode == "1") {
+        cout << "Erreur, le processus de récuperation du message dissimulé n'as pas réussit." << endl;
+     }else if (messageDecode == "2") {
+         cout << "Information, ce fichier ne possède pas de message dissimuler." << endl;
+     } else if (messageDecode == "3") {
+         cout << "Erreur, pas de balise correcte. message modifié ou inexistant."<< endl;
+     } else {
+        cout << messageDecode << endl;
+     }
 
     return 0;
-    // TIP See CLion help at <a href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>. Also, you can try interactive lessons for CLion by selecting 'Help | Learn IDE Features' from the main menu.
 }
