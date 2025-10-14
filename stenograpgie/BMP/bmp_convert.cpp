@@ -10,8 +10,17 @@
 
 using namespace std;
 
-void bmpConvert(string message)
+void bmpConvert(string pathFile)
 {
+    if (!supportedFile(pathFile))
+    {
+        cout << "[HiddenInk] Erreur : ce type de fichier n'est pas supporté !" << endl;
+        return;
+    }
+
+    // On récupére le binaire de notre ficher
+    string binFile = BinForFile(pathFile);
+
     // Fichier d'input et dossier d'output
     string inputPath = "../img_banque/BMP/tigre.bmp";
     string outputPath = "../out/tigre_LSB.bmp";
@@ -38,7 +47,7 @@ void bmpConvert(string message)
     file.close();
 
     // On limite l'utilisations des octets
-    size_t n = std::min<size_t>(signatureSize + (message.length()), data.size() - headerSize);
+    size_t n = std::min<size_t>(signatureSize + (binFile.length()), data.size() - headerSize);
 
     for (size_t i = 0; i < n; ++i)
     {
@@ -50,7 +59,7 @@ void bmpConvert(string message)
     string messageBinaire;
     messageBinaire += signatureBinaire;
     messageBinaire += getBaliseBinary(true);
-    messageBinaire += message;
+    messageBinaire += binFile;
     messageBinaire += getBaliseBinary(false);
 
     // Vérifier que le message tient dans l'image

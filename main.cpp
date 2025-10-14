@@ -1,4 +1,6 @@
+#include <filesystem>
 #include <iostream>
+#include <fstream>
 #include <ostream>
 #include "stenograpgie/BMP/bmp_convert.h"
 #include "stenograpgie/BMP/bmp_Recuperation.h"
@@ -8,15 +10,16 @@ using namespace std;
 
 int main()
 {
-    string message;
     string messageDecode;
     string pathFile = "../img_banque/PNG/test.png";
 
-    message = BinForFile(pathFile);
-
-    if (message != "")
+    if (pathFile == "" || !std::filesystem::exists(pathFile))
     {
-        bmpConvert(message);
+        cout << "Erreur, le fichier n'existe pas." << endl;
+    }
+    else
+    {
+        bmpConvert(pathFile);
     }
 
     string path = "../out/tigre_LSB.bmp";

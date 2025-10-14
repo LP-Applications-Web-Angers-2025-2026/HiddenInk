@@ -1,8 +1,10 @@
 #include "utils_bin.h"
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <bitset>
+#include <vector>
 
 using namespace std;
 
@@ -149,5 +151,30 @@ string getBaliseBinary(bool ouverture) {
  */
 size_t getBaliseBinarySize() {
     return getBaliseBinary(0).size();
+}
+
+/**
+ * Vérifie si le fichier a une extension supportée
+ * @param filePath Le chemin du fichier à vérifier
+ * @return True si l'extension est supportée, false sinon
+ */
+bool supportedFile(const string& filePath)
+{
+    // listes des extensions prise en charge
+    const vector<string> supportedExtensions = {
+        ".txt", ".bmp", ".png"
+    };
+
+    // Obtenir les extensions
+    size_t dotPos = filePath.find_last_of('.');
+    if (dotPos == string::npos) return false;
+
+    string extension = filePath.substr(dotPos);
+
+    // Convertir les extension en lowercase
+    transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+    // vérifier que l'extension est supporté
+    return ranges::find(supportedExtensions, extension) != supportedExtensions.end();
 }
 

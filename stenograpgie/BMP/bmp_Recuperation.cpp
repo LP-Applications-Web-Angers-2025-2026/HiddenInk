@@ -112,6 +112,8 @@ string bmpRecup(const string& inputPath)
 
     outFile.close();
     // --- Retour console / texte ---
-    return "[HiddenInk] " + std::string(extension == ".txt" ? "Texte" : "Image BMP") + " extrait(e) avec succès dans " +
-        outputPath;
+    return "[HiddenInk] " +
+        std::string(extension == ".txt" ? "Texte"
+            : (extension == ".png" ? "Image PNG" : "Image BMP")) +
+        " extrait(e) avec succès dans " + outputPath;
 }

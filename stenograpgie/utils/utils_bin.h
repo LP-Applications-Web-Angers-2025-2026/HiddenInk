@@ -19,6 +19,7 @@ string getBalise(bool ouverture);
 size_t getBaliseSize();
 string getBaliseBinary(bool ouverture);
 size_t getBaliseBinarySize();
+bool supportedFile(const string& filePath);
 
 
 #endif //HIDDENINK_UTILS_BIN_H
