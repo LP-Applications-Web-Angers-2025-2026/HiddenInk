@@ -6,6 +6,7 @@
 using namespace std;
 
 string BinForLetter(char letter);
+string BinForString(string message);
 string binaireVersTexte(const string& binaire);
 
 string getSignature();

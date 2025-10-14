@@ -28,7 +28,5 @@ int main()
         cout << messageDecode << endl;
      }
 
-
-
     return 0;
 }

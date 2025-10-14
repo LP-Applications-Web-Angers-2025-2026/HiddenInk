@@ -36,9 +36,7 @@ void bmpConvert(string message) {
     string TabBinascii[taillechaine + 1];
 
     // Convertit chaque caractère du message en binaire et le stocke dans le tableau TabBinascii
-    for (int i=0; i<taillechaine; i++) {
-        TabBinascii[i] = BinForLetter(message[i]);
-    }
+    TabBinascii[taillechaine] = BinForString(message);
 
     // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
     vector<unsigned char> data((std::istreambuf_iterator<char>(file)),

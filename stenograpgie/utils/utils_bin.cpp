@@ -8,6 +8,24 @@ using namespace std;
 
 string BinForLetter(char letter) {return bitset<8>(static_cast<unsigned char>(letter)).to_string();}
 
+/**
+ * Converti une chaîne de caractères en une chaîne de bits 
+ * @param message La chaîne de caractères à convertir
+ * @return La chaîne de bits représentant le message (8 bits par caractère)
+ */
+string BinForString(string message) {
+    string binaire;
+    for (char c : message) {
+        binaire += BinForLetter(c);
+    }
+    return binaire;
+}
+
+/**
+ * Convertit une chaîne de bits en texte ASCII 
+ * @param binaire La chaîne de bits à convertir
+ * @return Le texte ASCII correspondant aux bits
+ */
 string binaireVersTexte(const string& binaire) {
 
     string texte; // sortie texte
@@ -22,31 +40,47 @@ string binaireVersTexte(const string& binaire) {
     return texte;
 }
 
+/**
+ * Retourne une signature permettant d'identifier la présence d'un message dissimulé
+ * @return La signature sous forme de chaine de caractères
+ */
 string getSignature() {
     return "!#@!";
 }
 
+/**
+ * Retourne la taille en caractère de la signature
+ * @return La taille de la signature
+ */
 size_t getSignatureSize() {
     return getSignature().size();
 }
 
+/**
+ * Retourne la signature sous forme binaire
+ * @return La signature en binaire sur 8 bits par caractère
+ */
 string getSignatureBinary() {
     string signatureBinaire;
 
     // Pour chaque caractère de la signature, on ajoute sa représentation binaire sur 8 bits
-    for (char c : getSignature()) {
-        bitset<8> b(static_cast<unsigned char>(c));
-        signatureBinaire += b.to_string();
-    }
-
-    return signatureBinaire; // renvoie la signature en binaire
+    return BinForString(getSignature());
 }
 
+/**
+ * Calcule et renvoie la taille de la signature binaire en bits
+ * @return La taille en bits de la signature binaire
+ */
 size_t getSignatureBinarySize() {
     // Taille en bits = nombre de caractères * 8
     return  getSignatureBinary().size();
 }
 
+/**
+ * Retourne la balise d'ouverture ou de fermeture selon le booléen passé en paramètre
+ * @param ouverture True pour la balise ouvrante, false pour la balise fermante 
+ * @return La balise sous forme de chaîne de caractères
+ */
 string getBalise(bool ouverture) {
 
     // 1 = ouverture
@@ -60,10 +94,19 @@ string getBalise(bool ouverture) {
     return balise;
 }
 
+/**
+ * Retourne la taille de la balise (ouvrante ou fermante) en caractères
+ * @return La taille d'une balise en nombre de caractères
+ */
 size_t getBaliseSize() {
     return getBalise(0).size();
 }
 
+/**
+ * Convertit une balise en sa représentation binaire
+ * @param ouverture True pour la balise ouvrante, false pour la balise fermante
+ * @return La balise en binaire sur 8 bits par caractère
+ */
 string getBaliseBinary(bool ouverture) {
     string baliseBinaire;
     bool boolBalise;
@@ -73,14 +116,13 @@ string getBaliseBinary(bool ouverture) {
     else { boolBalise = false;}
 
     // Pour chaque caractère de la signature, on ajoute sa représentation binaire sur 8 bits
-    for (char c : getBalise(boolBalise)) {
-        bitset<8> b(static_cast<unsigned char>(c));
-        baliseBinaire += b.to_string();
-    }
-
-    return baliseBinaire; // renvoie la signature en binaire
+    return BinForString(getBalise(boolBalise));
 }
 
+/**
+ * Retourne la taille en bits de la balise binaire
+ * @return La taille de la balise binaire en nombre de bits
+ */
 size_t getBaliseBinarySize() {
     return getBaliseBinary(0).size();
 }
