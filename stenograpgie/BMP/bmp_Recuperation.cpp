@@ -9,74 +9,109 @@
 
 using namespace std;
 
-string bmpRecup(const string& inputPath) {
-
+string bmpRecup(const string& inputPath)
+{
     string bitsLus;
-
-    // où sera enregistrer le message en binaire
     string messageBinaire;
 
-    // Taille de l'entète format BMP
-    size_t headerSize = 54;
+    // Taille de l'entête du format BMP
+    const size_t headerSize = 54;
 
-    // Ouverture du fichier en mode binaire
-    ifstream file(inputPath, std::ios::binary);
+    // --- Ouverture du fichier ---
+    ifstream file(inputPath, ios::binary);
     if (!file)
     {
-        cerr << "Erreur : impossible d'ouvrir " << inputPath << std::endl;
+        cerr << "Erreur : impossible d'ouvrir " << inputPath << endl;
         return "1";
     }
 
-    // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
-    vector<unsigned char> data((std::istreambuf_iterator<char>(file)),
-                                    std::istreambuf_iterator<char>());
-
-    // Fermer le fichier
+    // Lecture complète du fichier en mémoire
+    vector<unsigned char> data((istreambuf_iterator<char>(file)), {});
     file.close();
 
-    // Nombre de bits de la signature
-    size_t nbBits = getSignatureBinarySize();
-
-    // Lire uniquement le LSB de chaque octet après le header
-    for (size_t i = 0; i < nbBits; ++i) {
+    // --- Vérification de la signature ---
+    const size_t nbBits = getSignatureBinarySize();
+    for (size_t i = 0; i < nbBits && headerSize + i < data.size(); ++i)
+    {
         unsigned char octet = data[headerSize + i];
-        char lsb = (octet & 0x01) + '0'; // prendre le bit faible et le convertir en '0' ou '1'
-        bitsLus += lsb;
+        bitsLus += (octet & 0x01) + '0';
     }
 
-    // Comparer avec la chaîne attendue
-    string signatureAttendue = getSignatureBinary();
-
-    if (bitsLus != signatureAttendue){
+    const string signatureAttendue = getSignatureBinary();
+    if (bitsLus != signatureAttendue)
         return "2";
-    }
 
-    // ---- On recherche les balises ouvrantes et fermantes ----
-
-    // Compater avec les balises ouvrantes et fermantes
-    string baliseOuvrante = getBaliseBinary(true);
-    string baliseFermante = getBaliseBinary(false);
-
+    // --- Extraction du message complet ---
     bitsLus.clear();
-    for (size_t i = headerSize; i < data.size(); ++i) {
-        char bit = (data[i] & 0x01) + '0';
-        bitsLus += bit;
-    }
+    bitsLus.reserve(data.size() - headerSize);
 
-    size_t posOuv = bitsLus.find(getBaliseBinary(true));
-    size_t posFerm = bitsLus.find(getBaliseBinary(false), posOuv);
+    for (size_t i = headerSize; i < data.size(); ++i)
+        bitsLus += (data[i] & 0x01) + '0';
 
-    // Vérifie si les deux balises existent
-    if (posOuv == string::npos || posFerm == string::npos) {
+    // Recherche des balises
+    const string baliseOuvrante = getBaliseBinary(true);
+    const string baliseFermante = getBaliseBinary(false);
+
+    const size_t posOuv = bitsLus.find(baliseOuvrante);
+    const size_t posFerm = bitsLus.find(baliseFermante, posOuv);
+
+    if (posOuv == string::npos || posFerm == string::npos)
         return "3";
+
+    // Extraction du contenu entre balises
+    messageBinaire = bitsLus.substr(
+        posOuv + baliseOuvrante.size(),
+        posFerm - (posOuv + baliseOuvrante.size())
+    );
+
+    // --- Détection du type de fichier ---
+    string extension = ".txt"; // par défaut texte
+
+    // Vérifie si le message binaire commence par différentes signatures
+    if (messageBinaire.size() >= 16)
+    {
+        string debut = messageBinaire.substr(0, 16);
+
+        if (debut.substr(0, 8) == "01000010" && // 'B'
+            debut.substr(8, 8) == "01001101") // 'M'
+        {
+            extension = ".bmp";
+        }
+        else if (debut.substr(0, 8) == "10001001" && // PNG signature
+            debut.substr(8, 8) == "01010000")
+        {
+            extension = ".png";
+        }
     }
 
-    // On extrait le message entre les balises
-    messageBinaire = bitsLus.substr(
-    posOuv + getBaliseBinary(true).size(),
-    posFerm - (posOuv + getBaliseBinary(true).size())
-);
+    // --- Sauvegarde du contenu extrait ---
+    const string outputPath = "../out/fichier_extrait" + extension;
+    ofstream outFile(outputPath, ios::binary);
+    if (!outFile)
+    {
+        return "4";
+    }
 
-    // Conversion et retour
-    return binaireVersTexte(messageBinaire);
-};
+    if (extension == ".txt")
+    {
+        outFile << binaireVersTexte(messageBinaire);
+    }
+    else // fichier binaire (image)
+    {
+        vector<unsigned char> binData;
+        binData.reserve(messageBinaire.length() / 8);
+
+        for (size_t i = 0; i + 8 <= messageBinaire.length(); i += 8)
+        {
+            bitset<8> bits(messageBinaire.substr(i, 8));
+            binData.push_back(static_cast<unsigned char>(bits.to_ulong()));
+        }
+
+        outFile.write(reinterpret_cast<const char*>(binData.data()), binData.size());
+    }
+
+    outFile.close();
+    // --- Retour console / texte ---
+    return "[HiddenInk] " + std::string(extension == ".txt" ? "Texte" : "Image BMP") + " extrait(e) avec succès dans " +
+        outputPath;
+}

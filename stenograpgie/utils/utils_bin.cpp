@@ -6,6 +6,11 @@
 
 using namespace std;
 
+/**
+ * Retourne la représentation binaire sur 8 bits d'un caractère
+ * @param letter Le caractère à convertir
+ * @return La représentation binaire du caractère
+ */
 string BinForLetter(char letter) {return bitset<8>(static_cast<unsigned char>(letter)).to_string();}
 
 /**
@@ -16,6 +21,25 @@ string BinForLetter(char letter) {return bitset<8>(static_cast<unsigned char>(le
 string BinForString(string message) {
     string binaire;
     for (char c : message) {
+        binaire += BinForLetter(c);
+    }
+    return binaire;
+}
+
+/**
+ * Convertit le contenu d'un fichier en représentation binaire
+ * @param filePath Chemin du fichier à convertir
+ * @return La chaîne de bits représentant le contenu du fichier (8 bits par caractère)
+ */
+string BinForFile(const string& filePath) {
+    ifstream file(filePath, std::ios::binary);
+    if (!file) {
+        cerr << "Erreur : impossible d'ouvrir " << filePath << std::endl;
+        return "";
+    }
+    string binaire;
+    char c;
+    while (file.get(c)) {
         binaire += BinForLetter(c);
     }
     return binaire;

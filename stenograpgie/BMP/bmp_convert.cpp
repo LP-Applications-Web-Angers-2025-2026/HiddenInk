@@ -10,9 +10,8 @@
 
 using namespace std;
 
-
-void bmpConvert(string message) {
-
+void bmpConvert(string message)
+{
     // Fichier d'input et dossier d'output
     string inputPath = "../img_banque/BMP/tigre.bmp";
     string outputPath = "../out/tigre_LSB.bmp";
@@ -22,7 +21,7 @@ void bmpConvert(string message) {
     if (!file)
     {
         cerr << "Erreur : impossible d'ouvrir " << inputPath << std::endl;
-        return ;
+        return;
     }
 
     // Taille du header & de la signature
@@ -32,52 +31,46 @@ void bmpConvert(string message) {
     // Récupération de la signature en binaire
     string signatureBinaire = getSignatureBinary();
 
-    int taillechaine = message.size();
-    string TabBinascii[taillechaine + 1];
-
-    // Convertit chaque caractère du message en binaire et le stocke dans le tableau TabBinascii
-    TabBinascii[taillechaine] = BinForString(message);
-
     // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
     vector<unsigned char> data((std::istreambuf_iterator<char>(file)),
-                                std::istreambuf_iterator<char>());
+                               std::istreambuf_iterator<char>());
     // Femeture du fichier
     file.close();
 
     // On limite l'utilisations des octets
-    size_t n = std::min<size_t>(signatureSize + (message.size() * 8), data.size() - headerSize);
+    size_t n = std::min<size_t>(signatureSize + (message.length()), data.size() - headerSize);
 
     for (size_t i = 0; i < n; ++i)
     {
         bitset<8> bits(data[headerSize + i]);
-        if ((i+1) % 8 == 0) cout << "\n";
+        if ((i + 1) % 8 == 0) cout << "\n";
     }
 
     // Convertit et stock le message en binaire dans messageBinaire
     string messageBinaire;
     messageBinaire += signatureBinaire;
-
-    //balise ouverture
     messageBinaire += getBaliseBinary(true);
-
-    for (int i = 0; i < taillechaine; ++i) {
-        // Prend chaque caractère et le convertit en 8 bits continus
-        bitset<8> b(message[i]);
-        messageBinaire += b.to_string();
-    }
-
-    // balise fermantes
+    messageBinaire += message;
     messageBinaire += getBaliseBinary(false);
+
+    // Vérifier que le message tient dans l'image
+    if (messageBinaire.size() > data.size() - headerSize) {
+        cerr << "Erreur : le message est trop grand pour être caché dans cette image !" << endl;
+        return;
+    }
 
     // Change le LSB de chaque octet de l'image par chaque bit du message
     vector<unsigned char> modifiedData = data;
-    for (size_t i = 0; i < messageBinaire.size(); ++i){
+    for (size_t i = 0; i < messageBinaire.size(); ++i) {
         modifiedData[headerSize + i] &= 0xFE;
         modifiedData[headerSize + i] |= (messageBinaire[i] - '0');
     }
+
 
     // Sauvegarder l'image modifiée
     ofstream outFile(outputPath, ios::binary);
     outFile.write(reinterpret_cast<char*>(modifiedData.data()), modifiedData.size());
     outFile.close();
+
+    cout << "[HiddenInk] Votre fichier a bien été caché" << endl;
 }

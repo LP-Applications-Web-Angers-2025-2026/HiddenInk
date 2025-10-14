@@ -2,6 +2,7 @@
 #include <ostream>
 #include "stenograpgie/BMP/bmp_convert.h"
 #include "stenograpgie/BMP/bmp_Recuperation.h"
+#include "stenograpgie/utils/utils_bin.h"
 
 using namespace std;
 
@@ -9,10 +10,14 @@ int main()
 {
     string message;
     string messageDecode;
-    cout << "Entrez message à dissimuler : " << endl;
-    getline(cin, message);
+    string pathFile = "../img_banque/PNG/test.png";
 
-    bmpConvert(message);
+    message = BinForFile(pathFile);
+
+    if (message != "")
+    {
+        bmpConvert(message);
+    }
 
     string path = "../out/tigre_LSB.bmp";
 
