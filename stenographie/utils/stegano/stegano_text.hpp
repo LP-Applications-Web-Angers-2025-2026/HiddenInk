@@ -1,6 +1,6 @@
 #pragma once
-#include "external/stb_image.h"
-#include "external/stb_image_write.h"
+#include "../external/stb_image.h"
+#include "../external/stb_image_write.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>

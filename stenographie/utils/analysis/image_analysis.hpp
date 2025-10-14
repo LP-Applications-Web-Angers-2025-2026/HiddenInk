@@ -1,10 +1,12 @@
 #pragma once
-#include "external/stb_image.h"
+#include "../external/stb_image.h"
 #include <iostream>
 #include <vector>
 #include <cmath>
 #include <iomanip>
 #include <map>
+#include <algorithm>
+
 
 using namespace std;
 

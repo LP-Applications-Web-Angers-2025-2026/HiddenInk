@@ -176,3 +176,26 @@ bool supportedFile(const string& filePath)
     return ranges::find(supportedExtensions, extension) != supportedExtensions.end();
 }
 
+void afficherAide()
+{
+    std::cout << "=== STEGANOGRAPHIE AVANCEE ===\n\n";
+    std::cout << "Usage:\n";
+    std::cout << "  Mode interactif : ./main\n\n";
+    std::cout << "  Cacher une image : ./main hide-image <image_porteuse> <image_secrete> <sortie.png>\n";
+    std::cout << "  Extraire une image : ./main extract-image <image_avec_secret> <sortie.png>\n\n";
+    std::cout << "  Cacher un texte : ./main hide-text <image_porteuse> <message> <sortie.png>\n";
+    std::cout << "  Extraire un texte : ./main extract-text <image_avec_secret> [sortie.txt]\n\n";
+    std::cout << "  Comparer deux images : ./main compare <image1> <image2>\n";
+    std::cout << "  Analyser histogramme : ./main histogram <image>\n";
+    std::cout << "  Détecter stéganographie : ./main detect <image>\n\n";
+    std::cout << "Exemples:\n";
+    std::cout << "  ./main hide-image carrier.png secret.png output.png\n";
+    std::cout << "  ./main extract-image output.png extracted.png\n";
+    std::cout << "  ./main hide-text carrier.png \"Mon message secret\" output.png\n";
+    std::cout << "  ./main extract-text output.png message.txt\n";
+    std::cout << "  ./main compare original.png stego.png\n";
+    std::cout << "  ./main histogram image.png\n\n";
+    std::cout << "Note: Le nombre de bits par canal est détecté automatiquement.\n";
+    std::cout << "      Pour extract-text, le fichier .txt est optionnel (affichage uniquement si omis).\n";
+}
+

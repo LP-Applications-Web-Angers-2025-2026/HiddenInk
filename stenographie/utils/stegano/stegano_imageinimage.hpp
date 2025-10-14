@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "external/stb_image.h"
-#include "external/stb_image_write.h"
+#include "../external/stb_image.h"
+#include "../external/stb_image_write.h"
+#include "../utils_bin.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -10,49 +11,6 @@
 #include <cmath>
 
 using namespace std;
-
-// ============ FONCTIONS UTILITAIRES (inspirées de utils_bin) ============
-
-// Signature pour identifier un message caché
-inline string getSignature() {
-    return "!#@!";
-}
-
-inline string getSignatureBinary() {
-    string signatureBinaire;
-    for (char c : getSignature()) {
-        bitset<8> b(static_cast<unsigned char>(c));
-        signatureBinaire += b.to_string();
-    }
-    return signatureBinaire;
-}
-
-// Balises pour délimiter le contenu
-inline string getBalise(bool ouverture) {
-    return ouverture ? "~{&" : "&}~";
-}
-
-inline string getBaliseBinary(bool ouverture) {
-    string baliseBinaire;
-    for (char c : getBalise(ouverture)) {
-        bitset<8> b(static_cast<unsigned char>(c));
-        baliseBinaire += b.to_string();
-    }
-    return baliseBinaire;
-}
-
-// Conversion binaire vers texte
-inline string binaireVersTexte(const string& binaire) {
-    string texte;
-    for (size_t i = 0; i < binaire.size(); i += 8) {
-        if (i + 8 <= binaire.size()) {
-            string octet = binaire.substr(i, 8);
-            bitset<8> b(octet);
-            texte += static_cast<char>(b.to_ulong());
-        }
-    }
-    return texte;
-}
 
 // ============ FONCTIONS IMAGE ============
 
@@ -107,8 +65,8 @@ inline bool calculateOptimalSize(int cw, int ch, int cc, int& sw, int& sh, int s
                                   unsigned char*& secret, vector<unsigned char>& resizedBuffer,
                                   int maxBitsPerChannel = 2) {
     // Calculer la taille du message avec signature et balises
-    size_t signatureBits = getSignatureBinary().size();
-    size_t balisesBits = getBaliseBinary(true).size() + getBaliseBinary(false).size();
+    size_t signatureBits = getSignatureBinarySize();
+    size_t balisesBits = getBaliseBinarySize() * 2;
     size_t headerBits = 96; // 3 x 32 bits
     
     // Taille actuelle de l'image secrète en bits
@@ -332,8 +290,8 @@ inline vector<unsigned char> extractImageFromImage(unsigned char* carrier, int c
     outC = bitset<32>(contenu.substr(64, 32)).to_ulong();
     
     cout << "Dimensions: " << outW << "x" << outH << " (" << outC << " canaux)\n";
-    
-    // Extraire les données de l image
+
+    // Extraire les données de l'image
     size_t totalBits = (size_t)outW * outH * outC * 8;
     if (96 + totalBits > contenu.size()) {
         cerr << "Erreur : données d image incomplètes !\n";

@@ -22,4 +22,7 @@ size_t getBaliseBinarySize();
 bool supportedFile(const string& filePath);
 
 
+void afficherAide();
+
+
 #endif //HIDDENINK_UTILS_BIN_H
