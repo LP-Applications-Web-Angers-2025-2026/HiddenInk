@@ -22,7 +22,7 @@ inline unsigned char* loadImage(const string& path, int& w, int& h, int& c) {
 }
 
 // Sauvegarder une image PNG
-inline bool saveImage(const string& path, unsigned char* data, int w, int h, int c) {
+inline bool saveImage(const string& path, const unsigned char* data, int w, int h, int c) {
     return stbi_write_png(path.c_str(), w, h, c, data, w * c);
 }
 

@@ -173,14 +173,15 @@ bool supportedFile(const string& filePath)
     transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
     // vérifier que l'extension est supporté
-    return ranges::find(supportedExtensions, extension) != supportedExtensions.end();
+    return find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end();
 }
 
 void afficherAide()
 {
     std::cout << "=== STEGANOGRAPHIE AVANCEE ===\n\n";
     std::cout << "Usage:\n";
-    std::cout << "  Mode interactif : ./main\n\n";
+    std::cout << "  Mode interactif : ./main\n";
+    std::cout << "  Mode démonstration : ./main demo\n\n";
     std::cout << "  Cacher une image : ./main hide-image <image_porteuse> <image_secrete> <sortie.png>\n";
     std::cout << "  Extraire une image : ./main extract-image <image_avec_secret> <sortie.png>\n\n";
     std::cout << "  Cacher un texte : ./main hide-text <image_porteuse> <message> <sortie.png>\n";
