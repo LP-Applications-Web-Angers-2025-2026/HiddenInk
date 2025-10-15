@@ -5,6 +5,6 @@ using namespace std;
 
 #include <iostream>
 
-string bmpRecup( const string&);
+string bmpRecup(const string& inputPath, int bitPos, const string& key = "");
 
 #endif //HIDDENINK_BMP_RECUPERATION_H

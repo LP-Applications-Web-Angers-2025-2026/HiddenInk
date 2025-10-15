@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
         cerr << "Usage: " << argv[0] << " <input_bmp>" << endl;
         return 1;
     }
-    
+
     size_t headerSize = 54; // Taille de l'en-tête BMP
     string inputPath = argv[1];
     string outpout = argv[2];

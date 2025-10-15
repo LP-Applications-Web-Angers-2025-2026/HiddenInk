@@ -1,5 +1,6 @@
 #include "bmp_Recuperation.h"
 #include "../utils/utils_bin.h"
+#include "../encrypt/encrypt.h"
 
 #include <iostream>
 #include <fstream>
@@ -9,10 +10,9 @@
 
 using namespace std;
 
-string bmpRecup(const string& inputPath)
+string bmpRecup(const string& inputPath, int bitPos, const string& key)
 {
     string bitsLus;
-    string messageBinaire;
 
     // Taille de l'entête du format BMP
     const size_t headerSize = 54;
@@ -34,7 +34,7 @@ string bmpRecup(const string& inputPath)
     for (size_t i = 0; i < nbBits && headerSize + i < data.size(); ++i)
     {
         unsigned char octet = data[headerSize + i];
-        bitsLus += (octet & 0x01) + '0';
+        bitsLus += ((octet >> bitPos) & 0x01) + '0';
     }
 
     // --- Vérification de la signature ---
@@ -47,7 +47,7 @@ string bmpRecup(const string& inputPath)
     bitsLus.reserve(data.size() - headerSize);
 
     for (size_t i = headerSize; i < data.size(); ++i)
-        bitsLus += (data[i] & 0x01) + '0';
+        bitsLus += ((data[i] >> bitPos) & 0x01) + '0';
 
     // Recherche des balises
     const string baliseOuvrante = getBaliseBinary(true);
@@ -60,10 +60,38 @@ string bmpRecup(const string& inputPath)
         return "3";
 
     // Extraction du contenu entre balises
-    messageBinaire = bitsLus.substr(
+    string cipherBinaire = bitsLus.substr(
         posOuv + baliseOuvrante.size(),
         posFerm - (posOuv + baliseOuvrante.size())
     );
+
+
+    //DECHIFFREMENT DU MESSAGE
+    // Convertir le binaire chiffré en string
+    string cipher;
+    for (size_t i = 0; i + 8 <= cipherBinaire.length(); i += 8)
+    {
+        bitset<8> bits(cipherBinaire.substr(i, 8));
+        cipher += static_cast<char>(bits.to_ulong());
+    }
+
+    string messageBinaire;
+
+    if (!key.empty())
+    {
+        // Déchiffrement si clé fournie
+        messageBinaire = xor_encrypt(cipher, key);
+
+        // Affichage du message déchiffré
+        cout << "Message déchiffré : " << messageBinaire << "\n";
+    }
+    else
+    {
+        // Affichage du message récupéré (chiffré)
+        cout << "Message récupéré (chiffré, hex) : " << to_hex(cipher) << "\n";
+    }
+    //--- FIN DECHIFFREMENT DU MESSAGE ---
+
 
     // --- Détection du type de fichier ---
     string extension = ".txt"; // par défaut texte

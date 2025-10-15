@@ -107,10 +107,12 @@ inline int runBmpDemo()
         return kFailure;
     }
 
-    bmpConvert(sourcePath);
+    string fileHide = "../img_banque/BMP/tigre.bmp";
+    const string outputPath = "../out/hidden_image.bmp";
+    bmpConvert(sourcePath, fileHide, outputPath, 1, "default_key");
 
-    const string outputPath = "../out/tigre_LSB.bmp";
-    const string decoded = bmpRecup(outputPath);
+    const string decodedOutputPath = "../out/tigre_LSB.bmp";
+    const string decoded = bmpRecup(outputPath, 1);
     reportBmpDecodeResult(decoded);
 
     return (decoded == "1" || decoded == "3") ? kFailure : kSuccess;
