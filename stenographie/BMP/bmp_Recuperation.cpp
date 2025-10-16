@@ -1,6 +1,6 @@
 #include "bmp_Recuperation.h"
 #include "../utils/utils_bin.h"
-#include "../encrypt/encrypt.h"
+#include "../utils/encrypt/encrypt.h"
 
 #include <iostream>
 #include <fstream>

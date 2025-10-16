@@ -78,6 +78,7 @@ inline string detectOptimalOutputFormat(const string& carrierPath, const string&
     return ".png";
 }
 
+// Recupérer les Erreurs
 inline void reportBmpDecodeResult(const string& decoded)
 {
     if (decoded == "1")
@@ -97,6 +98,7 @@ inline void reportBmpDecodeResult(const string& decoded)
         cout << decoded << endl;
     }
 }
+
 
 inline int runBmpDemo()
 {

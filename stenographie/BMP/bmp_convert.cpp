@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <cctype>
 
-#include "../encrypt/encrypt.h"
+#include "../utils/encrypt/encrypt.h"
 using namespace std;
 
 void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos, string key)

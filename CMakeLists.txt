@@ -13,5 +13,5 @@ add_executable(HiddenInk main.cpp
         stenographie/PNG/fonction_menu.cpp
         stenographie/PNG/fonction_menu.h
         stenographie/utils/external/stb_image_write.h
-        stenographie/encrypt/encrypt.h
-        stenographie/encrypt/encrypt.cpp)
+        stenographie/utils/encrypt/encrypt.h
+        stenographie/utils/encrypt/encrypt.cpp)

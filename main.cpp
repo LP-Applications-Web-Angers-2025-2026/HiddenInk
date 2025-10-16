@@ -5,10 +5,18 @@
 #include "stenographie/utils/main_helpers.hpp"
 #include "stenographie/BMP/bmp_convert.h"
 #include "stenographie/BMP/bmp_Recuperation.h"
-#include "stenographie/utils/utils_bin.h"
-#include "stenographie/encrypt/encrypt.h"
+#include "stenographie/utils//encrypt/encrypt.h"
 
 using namespace MainHelpers;
+
+/*
+ * return 1 = mauvais argument
+ * return 2 = pas de mode ou Mode invalide
+ * return 3 =
+ * return 4 = problème Bits : mauvais choix de bits (ex 9)
+ *
+ */
+
 
 int main(int argc, char* argv[])
 {
@@ -22,7 +30,7 @@ int main(int argc, char* argv[])
     if (mode != "HIDE" && mode != "EXTRACT" && mode != "INTERACT")
     {
         cerr << "Mode invalide. Utilisez HIDE ou EXTRACT ou INTERACT." << endl;
-        return 1;
+        return 2;
     }
 
     // non interactif
@@ -33,6 +41,7 @@ int main(int argc, char* argv[])
         return 1;
     }
     cout << mode << endl;
+
 
     std::string inputPath = "test";
     if (argc >= 3 && argv[2][0] != '\0')
@@ -63,13 +72,13 @@ int main(int argc, char* argv[])
             catch (...)
             {
                 cerr << "Position de bit invalide : " << argv[5] << endl;
-                return 1;
+                return 4;
             }
         }
         if (bitNum < 1 || bitNum > 8)
         {
             cerr << "Position de bit invalide (1-8)." << endl;
-            return 1;
+            return 4;
         }
         int bitPos = bitNum - 1; // 0 pour LSB, 7 pour MSB
 
@@ -93,8 +102,10 @@ int main(int argc, char* argv[])
         if (argc < 4 || argc > 5)
         {
             cerr << "Usage pour EXTRACT: " << argv[0] << " EXTRACT <input_bmp> <key> [bit_position]" << endl;
+            // A refaire : pas compréhensible  pour les non-informaticiens
             return 1;
         }
+
         string keyHex = argv[3];
         if (argc == 5)
         {
@@ -105,13 +116,13 @@ int main(int argc, char* argv[])
             catch (...)
             {
                 cerr << "Position de bit invalide : " << argv[4] << endl;
-                return 1;
+                return 4;
             }
         }
         if (bitNum < 1 || bitNum > 8)
         {
             cerr << "Position de bit invalide (1-8)." << endl;
-            return 1;
+            return 4;
         }
         int bitPos = bitNum - 1; // 0 pour LSB, 7 pour MSB
 
@@ -144,6 +155,7 @@ int main(int argc, char* argv[])
             cout << messageDecode << endl;
         }
     }
+
     else if (mode == "INTERACT")
     {
         // interactif
