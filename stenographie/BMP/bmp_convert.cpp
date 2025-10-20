@@ -7,11 +7,12 @@
 #include <bitset>
 #include <algorithm>
 #include <cctype>
+#include <filesystem>
 
 #include "../utils/encrypt/encrypt.h"
 using namespace std;
 
-void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos, string key)
+void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos)
 {
     if (!supportedFile(fileToHide))
     {
@@ -19,6 +20,9 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
         return;
     }
 
+    // Générer une clé
+    std::string key = generate_key(16);
+    std::cout << "Clé (hex) : " << to_hex(key) << "\n";
 
     //CHIFFREMENT DU MESSAGE
     // Lire le contenu du fichier en tant que string (clair)
@@ -94,6 +98,9 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
         modifiedData[headerSize + i] |= ((messageBinaire[i] - '0') << bitPos);
     }
 
+
+    // Créer le dossier out s'il n'existe pas
+    std::filesystem::create_directories("out");
 
     // Sauvegarder l'image modifiée
     ofstream outFile(outputPath, ios::binary);

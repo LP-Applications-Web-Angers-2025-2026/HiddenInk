@@ -1,18 +1,21 @@
 #include "fonctions_main.h"
 #include <filesystem>
 #include <iostream>
-#include <fstream>
 #include <ostream>
 #include <string>
-#include <limits>
-#include "../../steganographie/BMP/bmp_convert.h"
-#include "../../steganographie/BMP/bmp_Recuperation.h"
-#include "../../steganographie/utils/utils_bin.h"
-#include "../../steganographie/encrypt/encrypt.h"
-#include "../../steganographie/utils/stegano/stegano_text.hpp"
-#include "../../steganographie/utils/stegano/stegano_imageinimage.hpp"
-#include "../../steganographie/PNG/fonction_menu.h"
-#include "../../steganographie/utils/histogramme/histogram.h"
+
+#include "../stenographie/main_helpers.hpp"
+#include "../stenographie/BMP/bmp_convert.h"
+#include "../stenographie/BMP/bmp_Recuperation.h"
+#include "../stenographie/utils/utils_bin.h"
+#include "../stenographie/utils/analysis/image_analysis.hpp"
+#include "../stenographie/utils/stegano/stegano_text.hpp"
+#include "../stenographie/utils/stegano/stegano_imageinimage.hpp"
+#include "../stenographie/utils/histogramme/histogram.h"
+#include "../stenographie/PNG/fonction_menu.h"
+#include "../stenographie/utils/encrypt/encrypt.h"
+#include "../stenographie/utils/utils_bin.h"
+
 
 using namespace std;
 
@@ -85,3 +88,25 @@ void print_usage() {
     cerr << "       " << " HISTO <input_bmp>" << endl;
     cerr << "       " << " INTERACT" << endl;
 }
+
+int runInteractiveMode()
+{
+    cout << "    STEGANOGRAPHIE AVANCEE             \n";
+    cout << "  1.  Cacher un texte dans une image\n";
+    cout << "  2.   Cacher une image dans une image\n";
+    cout << "  3.   Extraire des donnees\n";
+    cout << "  4.   Analyser une image\n";
+    cout << "\nChoix : ";
+
+    int choix = 0;
+    if (!(std::cin >> choix))
+    {
+        cerr << " Entrée invalide." << endl;
+        return 1;
+    }
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    return fonction_menu(choix);
+}
+

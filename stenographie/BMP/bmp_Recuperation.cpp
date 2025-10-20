@@ -7,6 +7,7 @@
 #include <vector>
 #include <bitset>
 #include <cctype>
+#include <filesystem>
 
 using namespace std;
 
@@ -71,19 +72,26 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
     string cipher;
     for (size_t i = 0; i + 8 <= cipherBinaire.length(); i += 8)
     {
-        bitset<8> bits(cipherBinaire.substr(i, 8));
-        cipher += static_cast<char>(bits.to_ulong());
+        string octetStr = cipherBinaire.substr(i, 8);
+        if (octetStr.length() == 8)
+        {
+            bitset<8> bits(octetStr);
+            cipher += static_cast<char>(bits.to_ulong());
+        }
     }
 
     string messageBinaire;
 
     if (!key.empty())
     {
-        // Déchiffrement si clé fournie
-        messageBinaire = xor_encrypt(cipher, key);
+        // Conversion de la clé hex en bytes
+        string byteKey = hex_to_key(key);
 
-        // Affichage du message déchiffré
-        cout << "Message déchiffré : " << messageBinaire << "\n";
+        // Déchiffrement si clé fournie
+        messageBinaire = xor_encrypt(cipher, byteKey);
+
+        // Pour les images, on n'affiche pas le contenu déchiffré
+        // cout << "Message déchiffré : " << messageBinaire << "\n";
     }
     else
     {
@@ -96,25 +104,22 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
     // --- Détection du type de fichier ---
     string extension = ".txt"; // par défaut texte
 
-    // Vérifie si le message binaire commence par différentes signatures
-    if (messageBinaire.size() >= 16)
+    // Vérifie si le message commence par différentes signatures
+    if (messageBinaire.size() >= 2 &&
+        static_cast<unsigned char>(messageBinaire[0]) == 0x42 && // 'B'
+        static_cast<unsigned char>(messageBinaire[1]) == 0x4D) // 'M'
     {
-        string debut = messageBinaire.substr(0, 16);
-
-        if (debut.substr(0, 8) == "01000010" && // 'B'
-            debut.substr(8, 8) == "01001101") // 'M'
-        {
-            extension = ".bmp";
-        }
-        else if (debut.substr(0, 8) == "10001001" && // PNG signature
-            debut.substr(8, 8) == "01010000")
-        {
-            extension = ".png";
-        }
+        extension = ".bmp";
+    }
+    else if (messageBinaire.size() >= 8 &&
+        messageBinaire.substr(0, 8) == "\x89PNG\r\n\x1a\n")
+    {
+        extension = ".png";
     }
 
     // --- Sauvegarde du contenu extrait ---
     const string outputPath = "../out/fichier_extrait" + extension;
+    std::filesystem::create_directories("../out");
     ofstream outFile(outputPath, ios::binary);
     if (!outFile)
     {
@@ -123,20 +128,13 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
 
     if (extension == ".txt")
     {
-        outFile << binaireVersTexte(messageBinaire);
+        outFile << messageBinaire;
+        cout << "Message extrait : " << messageBinaire << "\n";
     }
     else // fichier binaire (image)
     {
-        vector<unsigned char> binData;
-        binData.reserve(messageBinaire.length() / 8);
-
-        for (size_t i = 0; i + 8 <= messageBinaire.length(); i += 8)
-        {
-            bitset<8> bits(messageBinaire.substr(i, 8));
-            binData.push_back(static_cast<unsigned char>(bits.to_ulong()));
-        }
-
-        outFile.write(reinterpret_cast<const char*>(binData.data()), binData.size());
+        // messageBinaire est déjà les données binaires sous forme de string
+        outFile.write(messageBinaire.data(), messageBinaire.size());
     }
 
     outFile.close();

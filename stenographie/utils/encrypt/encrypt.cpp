@@ -27,3 +27,15 @@ std::string to_hex(const std::string &s) {
     for (unsigned char c : s) os << std::setw(2) << (int)c;
     return os.str();
 }
+
+std::string hex_to_key(const std::string& hex)
+{
+    std::string key;
+    for (size_t i = 0; i < hex.length(); i += 2)
+    {
+        std::string byteString = hex.substr(i, 2);
+        unsigned char byte = static_cast<unsigned char>(std::stoi(byteString, nullptr, 16));
+        key += byte;
+    }
+    return key;
+}

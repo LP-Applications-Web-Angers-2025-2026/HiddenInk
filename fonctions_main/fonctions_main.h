@@ -11,5 +11,6 @@ int bit_position(int argc, char* argv[], int arg_index);
 bool validate_file_exists(const std::string& path);
 void print_usage();
 void processHistogram(const std::string& inputPath);
+int runInteractiveMode();
 
 #endif // FONCTIONS_MAIN_H

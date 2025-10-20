@@ -9,13 +9,13 @@
 #include <ctime>
 #include <sstream>
 #include <iomanip>
-#include "../BMP/bmp_convert.h"
-#include "../BMP/bmp_Recuperation.h"
-#include "../PNG/fonction_menu.h"
-#include "utils_bin.h"
-#include "analysis/image_analysis.hpp"
-#include "stegano/stegano_imageinimage.hpp"
-#include "stegano/stegano_text.hpp"
+#include "BMP/bmp_convert.h"
+#include "BMP/bmp_Recuperation.h"
+#include "PNG/fonction_menu.h"
+#include "utils/utils_bin.h"
+#include "utils/analysis/image_analysis.hpp"
+#include "utils/stegano/stegano_imageinimage.hpp"
+#include "utils/stegano/stegano_text.hpp"
 
 namespace MainHelpers
 {
@@ -111,7 +111,7 @@ inline int runBmpDemo()
 
     string fileHide = "../img_banque/BMP/tigre.bmp";
     const string outputPath = "../out/hidden_image.bmp";
-    bmpConvert(sourcePath, fileHide, outputPath, 1, "default_key");
+    bmpConvert(sourcePath, fileHide, outputPath, 1);
 
     const string decodedOutputPath = "../out/tigre_LSB.bmp";
     const string decoded = bmpRecup(outputPath, 1);
