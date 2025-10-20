@@ -22,7 +22,7 @@ int hide(int argc, char* argv[]) {
     string inputPath = argv[2];
     string fileToHide = argv[3];
     string outputPath = argv[4];
-    string chiffrement = argv[5];
+    string key = argv[5];
     int bitPos = bit_position(argc, argv, 5);
     if (bitPos == -1) return 1;
 
@@ -32,18 +32,28 @@ int hide(int argc, char* argv[]) {
     }
 
     // Cacher le message dans le bit spécifié
-    bmpConvert(inputPath, fileToHide, outputPath, bitPos, chiffrement == "0");
+    bmpConvert(inputPath, fileToHide, outputPath, bitPos, key);
     return 0;
 }
 
 /**
- * Fonction qui extrait un message caché d'une image.
- * @param argc Nombre d'arguments passés en ligne de commande 
- * @param argv Tableau contenant les arguments passés en ligne de commande
- *            argv[2]: Chemin de l'image d'entrée
- *            argv[3]: Clé de déchiffrement en hexadécimal
- *            argv[4]: (Optionnel) Position du bit de dissimulation (1-8)
- * @return 0 si l'extraction réussit, 1 en cas d'erreur
+ * Extrait un message caché d'une image BMP en utilisant la stéganographie.
+ * 
+ * @param argc Nombre d'arguments de la ligne de commande
+ * @param argv Tableau des arguments de la ligne de commande contenant:
+ *            - argv[2]: Chemin vers l'image BMP source
+ *            - argv[3]: Clé de déchiffrement en format hexadécimal
+ *            - argv[4]: (Optionnel) Position du bit de dissimulation (1-8, défaut=1)
+ * 
+ * @return Code de retour :
+ *         - 0 : Extraction réussie
+ *         - 1 : Erreur lors de l'extraction
+ * 
+ * @note Le message extrait est affiché sur la sortie standard.
+ *       Des messages d'erreur spécifiques sont affichés si :
+ *       - Le processus d'extraction échoue
+ *       - Aucun message n'est trouvé dans l'image
+ *       - Les balises de début/fin sont invalides/corrompues
  */
 int extract(int argc, char* argv[]) {
     string inputPath = argv[2];

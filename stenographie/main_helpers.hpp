@@ -102,7 +102,7 @@ inline void reportBmpDecodeResult(const string& decoded)
 
 inline int runBmpDemo()
 {
-    bool chiffrer = false;
+    string key = "";
     const string sourcePath = "../img_banque/BMP/test.bmp";
     if (!std::filesystem::exists(sourcePath))
     {
@@ -112,7 +112,7 @@ inline int runBmpDemo()
 
     string fileHide = "../img_banque/BMP/tigre.bmp";
     const string outputPath = "../out/hidden_image.bmp";
-    bmpConvert(sourcePath, fileHide, outputPath, 1, chiffrer);
+    bmpConvert(sourcePath, fileHide, outputPath, 1, key);
 
     const string decodedOutputPath = "../out/tigre_LSB.bmp";
     const string decoded = bmpRecup(outputPath, 1);

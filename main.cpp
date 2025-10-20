@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     }
     else if (mode == "HIDE")
     {
-        if (argc < 5 || argc > 6)
+        if (argc < 6 || argc > 7)
         {
             print_usage();
             return 1;

@@ -11,7 +11,7 @@
 #include "../utils/encrypt/encrypt.h"
 using namespace std;
 
-void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos, bool chiffrer)
+void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos, string key)
 {
     string binFile, messageBinaire, signatureBinaire;
 
@@ -25,7 +25,7 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
         return;
     }
 
-    binFile = lireFichier(fileToHide, chiffrer);
+    binFile = lireFichierKey(fileToHide, key);
 
     // Vérification des variables
     ifstream file(inputPath, std::ios::binary);

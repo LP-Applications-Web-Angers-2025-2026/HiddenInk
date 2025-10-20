@@ -50,6 +50,20 @@ string BinForFile(const string& filePath) {
 }
 
 /**
+ * Convertit un vecteur d'octets en chaîne binaire
+ * @param data Le vecteur d'octets à convertir
+ * @return La chaîne binaire correspondante (8 bits par octet)
+ */
+string BinForBytes(const vector<unsigned char>& data)
+{
+    string bits;
+    bits.reserve(data.size() * 8);
+    for (unsigned char c : data)
+        bits += bitset<8>(c).to_string();
+    return bits;
+}
+
+/**
  * Convertit une chaîne de bits en texte ASCII 
  * @param binaire La chaîne de bits à convertir
  * @return Le texte ASCII correspondant aux bits
@@ -181,9 +195,9 @@ bool supportedFile(const string& filePath)
  * @param chiffrer Indique si le contenu doit être chiffré avant la conversion en binaire
  * @return Le contenu du fichier converti en binaire (et chiffré si demandé)
  */
-string lireFichier(string fileToHide, bool chiffrer)
+string lireFichierKey(string fileToHide, string key)
 {
-    string key, cipher;
+    string cipher;
     // Lire le contenu du fichier en tant que string (clair)
     ifstream fileToHideStream(fileToHide, ios::binary);
     if (!fileToHideStream)
@@ -195,12 +209,8 @@ string lireFichier(string fileToHide, bool chiffrer)
     string plainContent((istreambuf_iterator<char>(fileToHideStream)), istreambuf_iterator<char>());
     fileToHideStream.close();
 
-    if (chiffrer)
+    if (!key.empty())
     {
-        // Générer une clé
-        key = generate_key(16);
-        cout << "Clé (hex) : " << to_hex(key) << "\n";
-
         // Chiffrer le contenu en clair avec la clé fournie
         cipher = xor_encrypt(plainContent, key);
         plainContent = cipher; // à améliorer

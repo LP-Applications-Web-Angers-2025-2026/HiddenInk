@@ -57,9 +57,9 @@ static string getExt(const string& path)
 static int menuCacherTexte()
 {
     int w, h, c, formatChoix;
-    string carrierPath, message, outPath, formatExt;
+    string carrierPath, message, outPath, formatExt, key = "";
+    char encryptChoice;
 
-    bool chiffrer = false;
 
     cout << "    CACHER UN TEXTE DANS UNE IMAGE    \n";
 
@@ -73,24 +73,24 @@ static int menuCacherTexte()
 
     switch(formatChoix)
     {
-        case 1: formatExt = ".png"; break;
+    case 1: formatExt = ".png";
+        break;
     case 2: formatExt = ".bmp";
         break;
     default:
-            cerr << " Choix invalide.\n";
-            return EXIT_FAILURE;
+        cerr << " Choix invalide.\n";
+        return EXIT_FAILURE;
     }
 
     cout << "\nImage porteuse : ";
     getline(cin, carrierPath);
     cout << "Fichier texte à cacher (.txt) : ";
     getline(cin, message);
+
     cout << "Chiffrer le message ? (o/n) : ";
-    char encryptChoice;
     cin >> encryptChoice;
     cin.ignore();
 
-    string key = "";
     if (encryptChoice == 'o' || encryptChoice == 'O')
     {
         key = generate_key(16);
@@ -118,7 +118,7 @@ static int menuCacherTexte()
     if (formatExt == ".bmp")
     {
         // Utiliser bmp_convert pour BMP
-        bmpConvert(carrierPath, message, outPath, 0, chiffrer); // bitPos = 0 par défaut
+        bmpConvert(carrierPath, message, outPath, 0, key); // bitPos = 0 par défaut
     }
     else
     {
@@ -144,7 +144,7 @@ static int menuCacherImage()
 {
     int cw, ch, cc, sw, sh, sc;
     string carrierPath, secretPath, outPath;
-
+    char encryptChoice;
 
     cout << "   CACHER UNE IMAGE DANS UNE IMAGE    \n";
 
@@ -174,11 +174,10 @@ static int menuCacherImage()
     cout << "Image à cacher : ";
     getline(cin, secretPath);
     cout << "Chiffrer l'image ? (o/n) : ";
-    char encryptChoice;
     cin >> encryptChoice;
     cin.ignore();
 
-    string key = "";
+    string key;
     if (encryptChoice == 'o' || encryptChoice == 'O')
     {
         key = generate_key(16);
@@ -206,7 +205,7 @@ static int menuCacherImage()
     if (formatExt == ".bmp")
     {
         // Pour BMP, utiliser bmp_convert avec l'image secrète comme "fichier à cacher"
-        bmpConvert(carrierPath, secretPath, outPath, 0, "0"); // bitPos = 0 par défaut
+        bmpConvert(carrierPath, secretPath, outPath, 0, key); // bitPos = 0 par défaut
     }
     else
     {

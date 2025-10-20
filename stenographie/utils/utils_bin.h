@@ -21,7 +21,7 @@ string getBaliseBinary(bool ouverture);
 size_t getBaliseBinarySize();
 bool supportedFile(const string& filePath);
 
-string lireFichier(string filetohide, bool chiffrer);
+string lireFichierKey(string filetohide, string key);
 void afficherAide();
 
 
