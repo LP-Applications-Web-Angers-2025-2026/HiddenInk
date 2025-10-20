@@ -1,47 +1,31 @@
 #include "bmp_convert.h"
 #include "../utils/utils_bin.h"
-
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <bitset>
-#include <algorithm>
 #include <cctype>
 #include <filesystem>
+#include <pstl/parallel_backend_utils.h>
 
 #include "../utils/encrypt/encrypt.h"
 using namespace std;
 
-void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos)
+void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos, bool chiffrer)
 {
+    string binFile, messageBinaire, signatureBinaire;
+
+    size_t signatureSize;
+
+    unsigned char mask;
+
     if (!supportedFile(fileToHide))
     {
         cout << "[HiddenInk] Erreur : ce type de fichier n'est pas supporté !" << endl;
         return;
     }
 
-    // Générer une clé
-    std::string key = generate_key(16);
-    std::cout << "Clé (hex) : " << to_hex(key) << "\n";
-
-    //CHIFFREMENT DU MESSAGE
-    // Lire le contenu du fichier en tant que string (clair)
-    ifstream fileToHideStream(fileToHide, ios::binary);
-    if (!fileToHideStream)
-    {
-        cout << "[HiddenInk] Erreur : impossible de lire le fichier à cacher." << endl;
-        return;
-    }
-    string plainContent((istreambuf_iterator<char>(fileToHideStream)), istreambuf_iterator<char>());
-    fileToHideStream.close();
-
-    // Chiffrer le contenu en clair avec la clé fournie
-    std::string cipher = xor_encrypt(plainContent, key);
-
-    // Convertir le contenu chiffré en binaire
-    string binFile = BinForString(cipher);
-    //--- FIN CHIFFREMENT DU MESSAGE ---
-
+    binFile = lireFichier(fileToHide, chiffrer);
 
     // Vérification des variables
     ifstream file(inputPath, std::ios::binary);
@@ -68,16 +52,17 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
         }
     }
 
-    size_t signatureSize = getSignatureSize();
-
+    signatureSize = getSignatureSize();
     // Récupération de la signature en binaire
-    string signatureBinaire = getSignatureBinary();
+    signatureBinaire = getSignatureBinary();
 
+    /*
+    // A supprimer si inutile
     // On limite l'utilisations des octets
-    size_t n = std::min<size_t>(signatureSize + (binFile.length()), data.size() - headerSize);
+    size_t limit = std::min<size_t>(signatureSize + (binFile.length()), data.size() - headerSize);
+    */
 
     // Convertit et stock le message en binaire dans messageBinaire
-    string messageBinaire;
     messageBinaire += signatureBinaire;
     messageBinaire += getBaliseBinary(true);
     messageBinaire += binFile;
@@ -91,13 +76,12 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
 
     // Change le bit spécifié de chaque octet de l'image par chaque bit du message
     vector<unsigned char> modifiedData = data;
-    unsigned char mask = ~(1 << bitPos); // Masque pour effacer le bit
+    mask = ~(1 << bitPos); // Masque pour effacer le bit
     for (size_t i = 0; i < messageBinaire.size(); ++i)
     {
         modifiedData[headerSize + i] &= mask;
         modifiedData[headerSize + i] |= ((messageBinaire[i] - '0') << bitPos);
     }
-
 
     // Créer le dossier out s'il n'existe pas
     std::filesystem::create_directories("out");

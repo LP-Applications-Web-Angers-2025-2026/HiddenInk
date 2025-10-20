@@ -5,6 +5,8 @@
 #include <fstream>
 #include <bitset>
 #include <vector>
+#include "../utils/encrypt/encrypt.h"
+
 
 using namespace std;
 
@@ -87,8 +89,6 @@ size_t getSignatureSize() {
  * @return La signature en binaire sur 8 bits par caractère
  */
 string getSignatureBinary() {
-    string signatureBinaire;
-
     // Pour chaque caractère de la signature, on ajoute sa représentation binaire sur 8 bits
     return BinForString(getSignature());
 }
@@ -132,7 +132,6 @@ size_t getBaliseSize() {
  * @return La balise en binaire sur 8 bits par caractère
  */
 string getBaliseBinary(bool ouverture) {
-    string baliseBinaire;
     bool boolBalise;
 
     // on vérifie si la balise à coder et la balise ouvrante ou fermemante
@@ -176,6 +175,49 @@ bool supportedFile(const string& filePath)
     return find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end();
 }
 
+/**
+ * Lit le contenu d'un fichier et le convertit éventuellement en binaire chiffré
+ * @param fileToHide Chemin du fichier à lire
+ * @param chiffrer Indique si le contenu doit être chiffré avant la conversion en binaire
+ * @return Le contenu du fichier converti en binaire (et chiffré si demandé)
+ */
+string lireFichier(string fileToHide, bool chiffrer)
+{
+    string key, cipher;
+    // Lire le contenu du fichier en tant que string (clair)
+    ifstream fileToHideStream(fileToHide, ios::binary);
+    if (!fileToHideStream)
+    {
+        cout << "[HiddenInk] Erreur : impossible de lire le fichier à cacher." << endl;
+        return "ERROR";
+    }
+
+    string plainContent((istreambuf_iterator<char>(fileToHideStream)), istreambuf_iterator<char>());
+    fileToHideStream.close();
+
+    if (chiffrer)
+    {
+        // Générer une clé
+        key = generate_key(16);
+        cout << "Clé (hex) : " << to_hex(key) << "\n";
+
+        // Chiffrer le contenu en clair avec la clé fournie
+        cipher = xor_encrypt(plainContent, key);
+        plainContent = cipher; // à améliorer
+    }
+
+    // Convertir le contenu chiffré en binaire
+    return BinForString(plainContent);
+}
+
+/**
+ * Affiche les instructions d'utilisation et les options disponibles pour le programme de stéganographie avancée.
+ *
+ * Cette méthode présente sous forme détaillée les différents modes de fonctionnement du programme,
+ * les commandes associées, ainsi que des exemples d'utilisation. Elle décrit les options pour
+ * cacher ou extraire des images et du texte, comparer des images, analyser des histogrammes et
+ * détecter la présence de stéganographie.
+ */
 void afficherAide()
 {
     std::cout << "=== STEGANOGRAPHIE AVANCEE ===\n\n";

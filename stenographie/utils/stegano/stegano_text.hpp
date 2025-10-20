@@ -1,6 +1,7 @@
 #pragma once
 #include "../external/stb_image.h"
 #include "../external/stb_image_write.h"
+#include "../encrypt/encrypt.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -61,7 +62,9 @@ inline int detectTextBitsPerChannel(unsigned char* carrier, int cw, int ch, int 
 
 // Cacher un message texte dans une image
 inline vector<unsigned char> hideTextInImage(unsigned char* carrier, int cw, int ch, int cc,
-                                             const string& message, int bitsPerChannel = 0) {
+                                             const string& message, int bitsPerChannel = 0,
+                                             const string& key = "")
+{
     // Si bitsPerChannel = 0, calculer automatiquement le minimum nécessaire
     if (bitsPerChannel == 0) {
         bitsPerChannel = 1; // Par défaut 1 bit (meilleure qualité)
@@ -124,7 +127,9 @@ inline vector<unsigned char> hideTextInImage(unsigned char* carrier, int cw, int
 }
 
 // Extraire un message texte d'une image
-inline string extractTextFromImage(unsigned char* carrier, int cw, int ch, int cc, int bitsPerChannel = 0) {
+inline string extractTextFromImage(unsigned char* carrier, int cw, int ch, int cc, int bitsPerChannel = 0,
+                                   const string& key = "")
+{
     // Si bitsPerChannel = 0, détecter automatiquement
     if (bitsPerChannel == 0) {
         cout << "🔍 Détection automatique...\n";
@@ -177,8 +182,18 @@ inline string extractTextFromImage(unsigned char* carrier, int cw, int ch, int c
     // Extraire le message
     size_t debutMessage = posOuv + baliseOuvrante.size();
     string messageBinaire = bitsLus.substr(debutMessage, posFerm - debutMessage);
-    
-    return binToText(messageBinaire);
+
+    string messageExtrait = binToText(messageBinaire);
+
+    // Déchiffrer si clé fournie
+    if (!key.empty())
+    {
+        string byteKey = hex_to_key(key);
+        messageExtrait = xor_encrypt(messageExtrait, byteKey);
+        cout << "🔓 Message déchiffré avec la clé fournie.\n";
+    }
+
+    return messageExtrait;
 }
 
 // Détecter automatiquement le nombre de bits pour un message texte

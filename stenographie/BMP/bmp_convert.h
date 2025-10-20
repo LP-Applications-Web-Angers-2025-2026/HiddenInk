@@ -7,6 +7,6 @@
 using namespace std;
 
 // Déclaration de la fonction (prototype)
-void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos);
+void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos, bool chiffrer);
 
 #endif //HIDDENINK_BMP_STEG_H

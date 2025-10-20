@@ -207,6 +207,8 @@ inline void generateHistogram(const string& path) {
 // Analyser une image pour détecter d'éventuelles anomalies de stéganographie
 inline void analyzeImageForSteganography(const string& path) {
     int w, h, c;
+    double ratio;
+
     auto img = stbi_load(path.c_str(), &w, &h, &c, 0);
     
     if (!img) {

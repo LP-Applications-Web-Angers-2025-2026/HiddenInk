@@ -56,8 +56,10 @@ static string getExt(const string& path)
 // Fonction pour gérer le sous-menu "Cacher un texte"
 static int menuCacherTexte()
 {
-    int w, h, c;
-    string carrierPath, message, outPath;
+    int w, h, c, formatChoix;
+    string carrierPath, message, outPath, formatExt;
+
+    bool chiffrer = false;
 
     cout << "    CACHER UN TEXTE DANS UNE IMAGE    \n";
 
@@ -66,11 +68,9 @@ static int menuCacherTexte()
     cout << "  2. BMP (Format brut)\n";
     cout << "\nChoix : ";
 
-    int formatChoix;
     cin >> formatChoix;
     cin.ignore();
 
-    string formatExt;
     switch(formatChoix)
     {
         case 1: formatExt = ".png"; break;
@@ -85,6 +85,18 @@ static int menuCacherTexte()
     getline(cin, carrierPath);
     cout << "Fichier texte à cacher (.txt) : ";
     getline(cin, message);
+    cout << "Chiffrer le message ? (o/n) : ";
+    char encryptChoice;
+    cin >> encryptChoice;
+    cin.ignore();
+
+    string key = "";
+    if (encryptChoice == 'o' || encryptChoice == 'O')
+    {
+        key = generate_key(16);
+        cout << "Clé (hex) : " << to_hex(key) << "\n";
+    }
+
     cout << "Nom du fichier de sortie (laisser vide pour auto) : ";
     getline(cin, outPath);
 
@@ -106,7 +118,7 @@ static int menuCacherTexte()
     if (formatExt == ".bmp")
     {
         // Utiliser bmp_convert pour BMP
-        bmpConvert(carrierPath, message, outPath, 0); // bitPos = 0 par défaut
+        bmpConvert(carrierPath, message, outPath, 0, chiffrer); // bitPos = 0 par défaut
     }
     else
     {
@@ -115,7 +127,7 @@ static int menuCacherTexte()
         if (!carrier) return EXIT_FAILURE;
 
         int bitsPerChannel = 0;
-        auto encoded = hideTextInImage(carrier, w, h, c, message, bitsPerChannel);
+        auto encoded = hideTextInImage(carrier, w, h, c, message, bitsPerChannel, key);
 
         if (!encoded.empty() && saveImage(outPath, encoded.data(), w, h, c))
             cout << "\n Message caché avec succès dans " << outPath << "\n";
@@ -161,6 +173,18 @@ static int menuCacherImage()
     getline(cin, carrierPath);
     cout << "Image à cacher : ";
     getline(cin, secretPath);
+    cout << "Chiffrer l'image ? (o/n) : ";
+    char encryptChoice;
+    cin >> encryptChoice;
+    cin.ignore();
+
+    string key = "";
+    if (encryptChoice == 'o' || encryptChoice == 'O')
+    {
+        key = generate_key(16);
+        cout << "Clé (hex) : " << to_hex(key) << "\n";
+    }
+
     cout << "Nom du fichier de sortie (laisser vide pour auto) : ";
     getline(cin, outPath);
 
@@ -182,7 +206,7 @@ static int menuCacherImage()
     if (formatExt == ".bmp")
     {
         // Pour BMP, utiliser bmp_convert avec l'image secrète comme "fichier à cacher"
-        bmpConvert(carrierPath, secretPath, outPath, 0); // bitPos = 0 par défaut
+        bmpConvert(carrierPath, secretPath, outPath, 0, "0"); // bitPos = 0 par défaut
     }
     else
     {
@@ -280,11 +304,14 @@ static int menuExtraire()
         else
         {
             // Utiliser les fonctions PNG pour PNG/JPG
+            string key;
+            cout << "Clé (hex) utilisée lors du cachage (laisser vide si aucune) : ";
+            getline(cin, key);
             auto img = loadImage(inputPath, w, h, c);
             if (!img) return EXIT_FAILURE;
 
             int bits = 0;
-            message = extractTextFromImage(img, w, h, c, bits);
+            message = extractTextFromImage(img, w, h, c, bits, key);
             if (!message.empty())
             {
                 cout << "\n MESSAGE EXTRAIT :\n";
@@ -343,11 +370,14 @@ static int menuExtraire()
         else
         {
             // Utiliser les fonctions PNG pour PNG/JPG
+            string key;
+            cout << "Clé (hex) utilisée lors du cachage (laisser vide si aucune) : ";
+            getline(cin, key);
             auto carrier = loadImage(inputPath, cw, ch, cc);
             if (!carrier) return EXIT_FAILURE;
 
             int bits = 0;
-            auto secret = extractImageFromImage(carrier, cw, ch, cc, bits, w, h, c);
+            auto secret = extractImageFromImage(carrier, cw, ch, cc, bits, w, h, c, key);
             if (!secret.empty())
             {
                 saveImage(outPath, secret.data(), w, h, c);

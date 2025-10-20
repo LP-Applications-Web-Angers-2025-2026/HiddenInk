@@ -102,6 +102,7 @@ inline void reportBmpDecodeResult(const string& decoded)
 
 inline int runBmpDemo()
 {
+    bool chiffrer = false;
     const string sourcePath = "../img_banque/BMP/test.bmp";
     if (!std::filesystem::exists(sourcePath))
     {
@@ -111,7 +112,7 @@ inline int runBmpDemo()
 
     string fileHide = "../img_banque/BMP/tigre.bmp";
     const string outputPath = "../out/hidden_image.bmp";
-    bmpConvert(sourcePath, fileHide, outputPath, 1);
+    bmpConvert(sourcePath, fileHide, outputPath, 1, chiffrer);
 
     const string decodedOutputPath = "../out/tigre_LSB.bmp";
     const string decoded = bmpRecup(outputPath, 1);
@@ -122,11 +123,15 @@ inline int runBmpDemo()
 
 inline int runHideImageMode(const string& carrierPath, const string& secretPath, const string& outPath, int bitsPerChannel)
 {
+    int cw = 0, ch = 0, cc = 0, sw = 0, sh = 0, sc = 0;
+
+    string ext, filename;
+
     // Générer automatiquement le chemin de sortie si vide
     string finalOutPath = outPath;
     if (finalOutPath.empty() || finalOutPath == "auto")
     {
-        string ext = detectOptimalOutputFormat(carrierPath, secretPath);
+        ext = detectOptimalOutputFormat(carrierPath, secretPath);
         finalOutPath = generateOutputPath("image_cachee", ext);
     }
     else
@@ -134,10 +139,10 @@ inline int runHideImageMode(const string& carrierPath, const string& secretPath,
         // S'assurer que le fichier va dans le dossier out
         if (finalOutPath.find("../out/") != 0 && finalOutPath.find("..\\out\\") != 0)
         {
-            string ext = getFileExtension(finalOutPath);
+            ext = getFileExtension(finalOutPath);
             if (ext.empty()) ext = ".png";
             size_t lastSlash = finalOutPath.find_last_of("/\\");
-            string filename = (lastSlash != string::npos) ? finalOutPath.substr(lastSlash + 1) : finalOutPath;
+            filename = (lastSlash != string::npos) ? finalOutPath.substr(lastSlash + 1) : finalOutPath;
             finalOutPath = "../out/" + filename;
         }
     }
@@ -155,7 +160,6 @@ inline int runHideImageMode(const string& carrierPath, const string& secretPath,
         cout << "Bits par canal : " << bitsPerChannel << endl << endl;
     }
 
-    int cw = 0, ch = 0, cc = 0, sw = 0, sh = 0, sc = 0;
     unsigned char* carrier = loadImage(carrierPath, cw, ch, cc);
     unsigned char* secret = loadImage(secretPath, sw, sh, sc);
 
@@ -193,6 +197,10 @@ inline int runHideImageMode(const string& carrierPath, const string& secretPath,
 
 inline int runExtractImageMode(const string& inputPath, const string& outPath, int bitsPerChannel)
 {
+    int cw = 0, ch = 0, cc = 0, outW = 0, outH = 0, outC = 0;
+
+    string ext, filename;
+
     // Générer automatiquement le chemin de sortie si vide
     string finalOutPath = outPath;
     if (finalOutPath.empty() || finalOutPath == "auto")
@@ -204,10 +212,10 @@ inline int runExtractImageMode(const string& inputPath, const string& outPath, i
         // S'assurer que le fichier va dans le dossier out
         if (finalOutPath.find("../out/") != 0 && finalOutPath.find("..\\out\\") != 0)
         {
-            string ext = getFileExtension(finalOutPath);
+            ext = getFileExtension(finalOutPath);
             if (ext.empty()) ext = ".png";
             size_t lastSlash = finalOutPath.find_last_of("/\\");
-            string filename = (lastSlash != string::npos) ? finalOutPath.substr(lastSlash + 1) : finalOutPath;
+            filename = (lastSlash != string::npos) ? finalOutPath.substr(lastSlash + 1) : finalOutPath;
             finalOutPath = "../out/" + filename;
         }
     }
@@ -224,7 +232,6 @@ inline int runExtractImageMode(const string& inputPath, const string& outPath, i
         cout << "Bits par canal : " << bitsPerChannel << endl << endl;
     }
 
-    int cw = 0, ch = 0, cc = 0, outW = 0, outH = 0, outC = 0;
     unsigned char* carrier = loadImage(inputPath, cw, ch, cc);
     if (!carrier)
     {
@@ -246,11 +253,15 @@ inline int runExtractImageMode(const string& inputPath, const string& outPath, i
 
 inline int runHideTextMode(const string& carrierPath, const string& message, const string& outPath, int bitsPerChannel)
 {
+    int w = 0, h = 0, c = 0;
+
+    string ext, filename;
     // Générer automatiquement le chemin de sortie si vide
     string finalOutPath = outPath;
+
     if (finalOutPath.empty() || finalOutPath == "auto")
     {
-        string ext = detectOptimalOutputFormat(carrierPath);
+        ext = detectOptimalOutputFormat(carrierPath);
         finalOutPath = generateOutputPath("texte_cache", ext);
     }
     else
@@ -258,10 +269,10 @@ inline int runHideTextMode(const string& carrierPath, const string& message, con
         // S'assurer que le fichier va dans le dossier out
         if (finalOutPath.find("../out/") != 0 && finalOutPath.find("..\\out\\") != 0)
         {
-            string ext = getFileExtension(finalOutPath);
+            ext = getFileExtension(finalOutPath);
             if (ext.empty()) ext = ".png";
             size_t lastSlash = finalOutPath.find_last_of("/\\");
-            string filename = (lastSlash != string::npos) ? finalOutPath.substr(lastSlash + 1) : finalOutPath;
+            filename = (lastSlash != string::npos) ? finalOutPath.substr(lastSlash + 1) : finalOutPath;
             finalOutPath = "../out/" + filename;
         }
     }
@@ -271,7 +282,6 @@ inline int runHideTextMode(const string& carrierPath, const string& message, con
     cout << "Message : \"" << message << "\"" << endl;
     cout << "Sortie : " << finalOutPath << endl << endl;
 
-    int w = 0, h = 0, c = 0;
     unsigned char* carrier = loadImage(carrierPath, w, h, c);
     if (!carrier)
     {
@@ -370,7 +380,6 @@ inline int runDetectMode(const string& imgPath)
 inline int runCommandLineMode(int argc, char* argv[])
 {
     const string mode = argv[1];
-
     try
     {
         if (mode == "help" || mode == "--help" || mode == "-h")
@@ -427,12 +436,12 @@ inline int runCommandLineMode(int argc, char* argv[])
         cerr << " Arguments invalides." << endl;
         afficherAide();
     }
-    catch (const std::invalid_argument&)
+    catch (const invalid_argument&)
     {
         cerr << " Erreur : argument numérique invalide." << endl;
         return kFailure;
     }
-    catch (const std::out_of_range&)
+    catch (const out_of_range&)
     {
         cerr << " Erreur : valeur numérique hors limite." << endl;
         return kFailure;
