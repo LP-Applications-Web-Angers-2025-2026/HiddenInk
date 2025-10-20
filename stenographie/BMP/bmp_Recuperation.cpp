@@ -87,16 +87,13 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
         // Conversion de la clé hex en bytes
         byteKey = hex_to_key(key);
 
-        // Déchiffrement si clé fournie
+        // Déchiffrement si clé fournie 
         messageBinaire = xor_encrypt(cipher, byteKey);
-
-        // Pour les images, on n'affiche pas le contenu déchiffré
-        // cout << "Message déchiffré : " << messageBinaire << "\n";
     }
     else
     {
-        // Affichage du message récupéré (chiffré)
-        cout << "Message récupéré (chiffré, hex) : " << to_hex(cipher) << "\n";
+        messageBinaire = cipher;
+        cout << messageBinaire << endl;
     }
     //--- FIN DECHIFFREMENT DU MESSAGE ---
 
@@ -126,21 +123,14 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
         return "4";
     }
 
-    if (extension == ".txt")
-    {
-        outFile << messageBinaire;
-        cout << "Message extrait : " << messageBinaire << "\n";
-    }
-    else // fichier binaire (image)
-    {
-        // messageBinaire est déjà les données binaires sous forme de string
-        outFile.write(messageBinaire.data(), messageBinaire.size());
-    }
+    // messageBinaire est déjà les données binaires sous forme de string
+    outFile.write(messageBinaire.data(), messageBinaire.size());
 
     outFile.close();
     // --- Retour console / texte ---
     return "[HiddenInk] " +
-        std::string(extension == ".txt" ? "Texte"
-            : (extension == ".png" ? "Image PNG" : "Image BMP")) +
+        std::string(extension == ".txt"
+                        ? "Texte"
+                        : (extension == ".png" ? "Image PNG" : "Image BMP")) +
         " extrait(e) avec succès dans " + outputPath;
 }
