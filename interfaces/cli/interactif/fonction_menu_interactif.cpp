@@ -1,9 +1,8 @@
 #include "fonction_menu_interactif.h"
-#include "../../../stenographie/utils/stegano/stegano_imageinimage.hpp"
-#include "../../../stenographie/utils/stegano/stegano_text.hpp"
+#include "../../../stenographie/PNG/png_hide_text.h"
+#include "../../../stenographie/PNG/png_hide_image.h"
+#include "../../../stenographie/PNG/png_extract.h"
 #include "../../../stenographie/utils/analysis/image_analysis.hpp"
-#include "../../../stenographie/utils/stegano/stegano_imageinimage.hpp"
-#include "../../../stenographie/utils/stegano/stegano_text.hpp"
 #include "../../../stenographie/BMP/bmp_convert.h"
 #include "../../../stenographie/BMP/bmp_Recuperation.h"
 #include "../../../stenographie/utils/utils_bin.h"
@@ -16,6 +15,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+
 
 using namespace std;
 
@@ -163,19 +163,8 @@ static int menuCacherTexte()
     }
     else
     {
-        // Utiliser les fonctions PNG pour PNG/JPG
-        auto carrier = loadImage(carrierPath, w, h, c);
-        if (!carrier) return EXIT_FAILURE;
-
-        int bitsPerChannel = 0;
-        auto encoded = hideTextInImage(carrier, w, h, c, message, bitsPerChannel);
-
-        if (!encoded.empty() && saveImage(outPath, encoded.data(), w, h, c))
-            cout << "\n Message caché avec succès dans " << outPath << "\n";
-        else
-            cerr << "\n Erreur : échec de l'encodage ou de la sauvegarde.\n";
-
-        stbi_image_free(carrier);
+        // Appeler la fonction PNG dédiée
+        return hidePNGText(carrierPath, message, outPath, 0);
     }
     return EXIT_SUCCESS;
 }
@@ -259,26 +248,8 @@ static int menuCacherImage()
     }
     else
     {
-        // Utiliser les fonctions PNG pour PNG/JPG
-        auto carrier = loadImage(carrierPath, cw, ch, cc);
-        auto secret = loadImage(secretPath, sw, sh, sc);
-
-        if (!carrier || !secret) return EXIT_FAILURE;
-
-        std::vector<unsigned char> resizedBuffer;
-        unsigned char* secretPtr = secret;
-        calculateOptimalSize(cw, ch, cc, sw, sh, sc, secretPtr, resizedBuffer);
-
-        int bitsPerChannel = 0;
-        auto encoded = hideImageInImage(carrier, cw, ch, cc, secretPtr, sw, sh, sc, bitsPerChannel);
-
-        if (!encoded.empty() && saveImage(outPath, encoded.data(), cw, ch, cc))
-            cout << "\n Image cachée avec succès dans " << outPath << "\n";
-        else
-            cerr << "\n Erreur : échec de l'encodage ou de la sauvegarde.\n";
-
-        stbi_image_free(carrier);
-        stbi_image_free(secret);
+        // Appeler la fonction PNG dédiée
+        return hidePNGImage(carrierPath, secretPath, outPath, 0);
     }
     return EXIT_SUCCESS;
 }
@@ -350,6 +321,8 @@ static int menuExtraire()
             string key;
             cout << "Clé (hex) utilisée lors du cachage : ";
             getline(cin, key);
+
+
             string result = bmpRecup(inputPath, 0, key); // bitPos = 0 par défaut
             cout << result << "\n";
 
@@ -362,33 +335,8 @@ static int menuExtraire()
         }
         else
         {
-            // Utiliser les fonctions PNG pour PNG/JPG
-            string key;
-            cout << "Clé (hex) utilisée lors du cachage (laisser vide si aucune) : ";
-            getline(cin, key);
-            auto img = loadImage(inputPath, w, h, c);
-            if (!img) return EXIT_FAILURE;
-
-            int bits = 0;
-            message = extractTextFromImage(img, w, h, c, bits);
-            if (!message.empty())
-            {
-                cout << "\n MESSAGE EXTRAIT :\n";
-
-                cout << message << "\n";
-
-
-                if (!outputPath.empty())
-                {
-                    saveMessageToFile(message, outputPath);
-                }
-            }
-            else
-            {
-                cerr << "\n Erreur : impossible d'extraire le message.\n";
-            }
-
-            stbi_image_free(img);
+            // Appeler la fonction PNG dédiée pour extraire le texte
+            extractPNGText(inputPath, outputPath);
         }
     }
     else if (extractChoix == 2)
@@ -428,23 +376,8 @@ static int menuExtraire()
         }
         else
         {
-            // Utiliser les fonctions PNG pour PNG/JPG
-            auto carrier = loadImage(inputPath, cw, ch, cc);
-            if (!carrier) return EXIT_FAILURE;
-
-            int bits = 0;
-            auto secret = extractImageFromImage(carrier, cw, ch, cc, bits, w, h, c);
-            if (!secret.empty())
-            {
-                saveImage(outPath, secret.data(), w, h, c);
-                cout << "\n Image extraite avec succès -> " << outPath << "\n";
-            }
-            else
-            {
-                cerr << "\n Erreur : impossible d'extraire l'image cachée.\n";
-            }
-
-            stbi_image_free(carrier);
+            // Appeler la fonction PNG dédiée pour extraire l'image
+            extractPNGImage(inputPath, outPath);
         }
     }
     else
