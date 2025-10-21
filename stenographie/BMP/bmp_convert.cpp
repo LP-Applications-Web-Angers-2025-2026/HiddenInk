@@ -56,12 +56,6 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
     // Récupération de la signature en binaire
     signatureBinaire = getSignatureBinary();
 
-    /*
-    // A supprimer si inutile
-    // On limite l'utilisations des octets
-    size_t limit = std::min<size_t>(signatureSize + (binFile.length()), data.size() - headerSize);
-    */
-
     // Convertit et stock le message en binaire dans messageBinaire
     messageBinaire += signatureBinaire;
     messageBinaire += getBaliseBinary(true);
