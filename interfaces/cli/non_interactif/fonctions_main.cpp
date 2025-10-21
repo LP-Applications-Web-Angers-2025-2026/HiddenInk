@@ -3,11 +3,10 @@
 #include <iostream>
 #include <ostream>
 #include <string>
-#include "../../../stenographie/main_helpers.hpp"
 #include "../../../stenographie/BMP/bmp_convert.h"
 #include "../../../stenographie/BMP/bmp_Recuperation.h"
 #include "../../../stenographie/utils/stegano/stegano_text.hpp"
-#include "../../../stenographie/PNG/fonction_menu.h"
+#include "../interactif/fonction_menu_interactif.h"
 
 
 using namespace std;

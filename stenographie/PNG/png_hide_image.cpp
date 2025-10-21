@@ -5,6 +5,15 @@
 
 using namespace std;
 
+/**
+ * Cache une image secrète dans une image porteuse en utilisant la stéganographie.
+ * 
+ * @param carrierPath Chemin vers l'image porteuse
+ * @param secretPath Chemin vers l'image à cacher
+ * @param outputPath Chemin de sortie pour l'image résultante
+ * @param bitsPerChannel Nombre de bits utilisés par canal pour cacher l'image
+ * @return EXIT_SUCCESS en cas de succès, EXIT_FAILURE en cas d'échec
+ */
 int hidePNGImage(const string& carrierPath, const string& secretPath, 
                  const string& outputPath, int bitsPerChannel)
 {
@@ -30,15 +39,15 @@ int hidePNGImage(const string& carrierPath, const string& secretPath,
     // Redimensionner si nécessaire
     vector<unsigned char> resizedBuffer;
     unsigned char* secretPtr = secret;
-    
+
     if (!calculateOptimalSize(cw, ch, cc, sw, sh, sc, secretPtr, resizedBuffer))
     {
-        cerr << "Erreur : impossible de calculer la taille optimale" << endl;
+        cerr << "Erreur : impossible de calculer la taille optimale de l'image secrète" << endl;
         stbi_image_free(carrier);
         stbi_image_free(secret);
         return EXIT_FAILURE;
     }
-    
+
     // Cacher l'image dans l'image porteuse
     auto encoded = hideImageInImage(carrier, cw, ch, cc, secretPtr, sw, sh, sc, bitsPerChannel);
     

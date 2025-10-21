@@ -1,14 +1,12 @@
 //
-// Created by perod on 20/10/2025.
+// Created by perod on 14/10/2025.
 //
 
-#ifndef UNTITLED_FONCTION_MENU_INTERACTIF_H
-#define UNTITLED_FONCTION_MENU_INTERACTIF_H
+#ifndef UNTITLED_FONCTION_MENU_H
+#define UNTITLED_FONCTION_MENU_H
 
 
-class fonction_menu_interactif
-{
-};
+int fonction_menu(int choix);
 
 
-#endif //UNTITLED_FONCTION_MENU_INTERACTIF_H
+#endif //UNTITLED_FONCTION_MENU_H

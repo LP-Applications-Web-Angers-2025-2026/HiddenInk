@@ -10,8 +10,8 @@ add_executable(HiddenInk main.cpp
         stenographie/utils/utils_bin.cpp
         stenographie/utils/utils_bin.h
         stenographie/utils/external/stb_impl.cpp
-        stenographie/PNG/fonction_menu.cpp
-        stenographie/PNG/fonction_menu.h
+        interfaces/cli/interactif/fonction_menu_interactif.cpp
+        interfaces/cli/interactif/fonction_menu_interactif.h
         stenographie/PNG/png_hide_text.cpp
         stenographie/PNG/png_hide_text.h
         stenographie/PNG/png_hide_image.cpp
