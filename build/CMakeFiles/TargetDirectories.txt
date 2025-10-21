@@ -1,0 +1,3 @@
+C:/Users/gambl/Desktop/HiddenInk/build/CMakeFiles/HiddenInk.dir
+C:/Users/gambl/Desktop/HiddenInk/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/gambl/Desktop/HiddenInk/build/CMakeFiles/ZERO_CHECK.dir

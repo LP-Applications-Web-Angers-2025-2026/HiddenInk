@@ -2,9 +2,10 @@
 //
 
 #include "fonction_menu.h"
+#include "png_hide_text.h"
+#include "png_hide_image.h"
+#include "png_extract.h"
 #include "../utils/analysis/image_analysis.hpp"
-#include "../utils/stegano/stegano_imageinimage.hpp"
-#include "../utils/stegano/stegano_text.hpp"
 #include "../BMP/bmp_convert.h"
 #include "../BMP/bmp_Recuperation.h"
 #include "../utils/utils_bin.h"
@@ -107,24 +108,13 @@ static int menuCacherTexte()
     {
         // Utiliser bmp_convert pour BMP
         bmpConvert(carrierPath, message, outPath, 0); // bitPos = 0 par défaut
+        return EXIT_SUCCESS;
     }
     else
     {
-        // Utiliser les fonctions PNG pour PNG/JPG
-        auto carrier = loadImage(carrierPath, w, h, c);
-        if (!carrier) return EXIT_FAILURE;
-
-        int bitsPerChannel = 0;
-        auto encoded = hideTextInImage(carrier, w, h, c, message, bitsPerChannel);
-
-        if (!encoded.empty() && saveImage(outPath, encoded.data(), w, h, c))
-            cout << "\n Message caché avec succès dans " << outPath << "\n";
-        else
-            cerr << "\n Erreur : échec de l'encodage ou de la sauvegarde.\n";
-
-        stbi_image_free(carrier);
+        // Appeler la fonction PNG dédiée
+        return hidePNGText(carrierPath, message, outPath, 0);
     }
-    return EXIT_SUCCESS;
 }
 
 // Fonction pour gérer le sous-menu "Cacher une image"
@@ -183,31 +173,13 @@ static int menuCacherImage()
     {
         // Pour BMP, utiliser bmp_convert avec l'image secrète comme "fichier à cacher"
         bmpConvert(carrierPath, secretPath, outPath, 0); // bitPos = 0 par défaut
+        return EXIT_SUCCESS;
     }
     else
     {
-        // Utiliser les fonctions PNG pour PNG/JPG
-        auto carrier = loadImage(carrierPath, cw, ch, cc);
-        auto secret = loadImage(secretPath, sw, sh, sc);
-
-        if (!carrier || !secret) return EXIT_FAILURE;
-
-        std::vector<unsigned char> resizedBuffer;
-        unsigned char* secretPtr = secret;
-        calculateOptimalSize(cw, ch, cc, sw, sh, sc, secretPtr, resizedBuffer);
-
-        int bitsPerChannel = 0;
-        auto encoded = hideImageInImage(carrier, cw, ch, cc, secretPtr, sw, sh, sc, bitsPerChannel);
-
-        if (!encoded.empty() && saveImage(outPath, encoded.data(), cw, ch, cc))
-            cout << "\n Image cachée avec succès dans " << outPath << "\n";
-        else
-            cerr << "\n Erreur : échec de l'encodage ou de la sauvegarde.\n";
-
-        stbi_image_free(carrier);
-        stbi_image_free(secret);
+        // Appeler la fonction PNG dédiée
+        return hidePNGImage(carrierPath, secretPath, outPath, 0);
     }
-    return EXIT_SUCCESS;
 }
 
 // Fonction pour gérer le sous-menu "Extraire"
@@ -279,30 +251,8 @@ static int menuExtraire()
         }
         else
         {
-            // Utiliser les fonctions PNG pour PNG/JPG
-            auto img = loadImage(inputPath, w, h, c);
-            if (!img) return EXIT_FAILURE;
-
-            int bits = 0;
-            message = extractTextFromImage(img, w, h, c, bits);
-            if (!message.empty())
-            {
-                cout << "\n MESSAGE EXTRAIT :\n";
-
-                cout << message << "\n";
-
-
-                if (!outputPath.empty())
-                {
-                    saveMessageToFile(message, outputPath);
-                }
-            }
-            else
-            {
-                cerr << "\n Erreur : impossible d'extraire le message.\n";
-            }
-
-            stbi_image_free(img);
+            // Appeler la fonction PNG dédiée pour extraire le texte
+            extractPNGText(inputPath, outputPath);
         }
     }
     else if (extractChoix == 2)
@@ -342,23 +292,8 @@ static int menuExtraire()
         }
         else
         {
-            // Utiliser les fonctions PNG pour PNG/JPG
-            auto carrier = loadImage(inputPath, cw, ch, cc);
-            if (!carrier) return EXIT_FAILURE;
-
-            int bits = 0;
-            auto secret = extractImageFromImage(carrier, cw, ch, cc, bits, w, h, c);
-            if (!secret.empty())
-            {
-                saveImage(outPath, secret.data(), w, h, c);
-                cout << "\n Image extraite avec succès -> " << outPath << "\n";
-            }
-            else
-            {
-                cerr << "\n Erreur : impossible d'extraire l'image cachée.\n";
-            }
-
-            stbi_image_free(carrier);
+            // Appeler la fonction PNG dédiée pour extraire l'image
+            extractPNGImage(inputPath, outPath);
         }
     }
     else
@@ -447,246 +382,3 @@ int fonction_menu(int choix)
     }
 }
 
-// ========== CODE LEGACY (à conserver pour référence) ==========
-// Ancienne implémentation du menu avec 7 options
-/*
-int fonction_menu_old(int choix)
-{
-    int w, h, c, cw, ch, cc, sw, sh, sc;
-
-    std::string imgPath, inputPath, outputPath, carrierPath, secretPath, outPath, message, img1, img2;
-
-    // ===== OPTION 1: CACHER UNE IMAGE =====
-    if (choix == 1)
-    {
-        std::cout << "\n=== CACHER UNE IMAGE ===\n";
-        std::cout << "Image porteuse : ";
-        std::getline(std::cin, carrierPath);
-        std::cout << "Image à cacher : ";
-        std::getline(std::cin, secretPath);
-        std::cout << "Nom du fichier de sortie (laisser vide pour auto) : ";
-        std::getline(std::cin, outPath);
-
-        // Générer un nom automatique si vide
-        if (outPath.empty())
-        {
-            string ext = (getExt(carrierPath) == ".bmp") ? ".bmp" : ".png";
-            outPath = generateUniqueFilename("image_cachee", ext);
-            std::cout << " Sauvegarde automatique : " << outPath << "\n";
-        }
-        else if (outPath.find("../out/") != 0)
-        {
-            string ext = getExt(outPath);
-            if (ext.empty()) ext = ".png";
-            size_t lastSlash = outPath.find_last_of("/\\");
-            string filename = (lastSlash != string::npos) ? outPath.substr(lastSlash + 1) : outPath;
-            outPath = "../out/" + filename;
-            std::cout << " Redirection vers : " << outPath << "\n";
-        }
-
-        auto carrier = loadImage(carrierPath, cw, ch, cc);
-        auto secret = loadImage(secretPath, sw, sh, sc);
-
-        if (!carrier || !secret) return EXIT_FAILURE;
-
-        std::vector<unsigned char> resizedBuffer;
-        unsigned char* secretPtr = secret;
-        calculateOptimalSize(cw, ch, cc, sw, sh, sc, secretPtr, resizedBuffer);
-
-        int bitsPerChannel = 0;
-        auto encoded = hideImageInImage(carrier, cw, ch, cc, secretPtr, sw, sh, sc, bitsPerChannel);
-
-        if (!encoded.empty() && saveImage(outPath, encoded.data(), cw, ch, cc))
-            std::cout << "\n Image cachée avec succès dans " << outPath << "\n";
-        else
-            std::cerr << "\n Erreur : échec de l'encodage ou de la sauvegarde.\n";
-
-        stbi_image_free(carrier);
-        stbi_image_free(secret);
-    }
-
-    // ===== OPTION 2: EXTRAIRE UNE IMAGE =====
-    else if (choix == 2)
-    {
-        std::cout << "\n=== EXTRAIRE UNE IMAGE ===\n";
-        std::cout << "Image contenant l'image cachée : ";
-        std::getline(std::cin, inputPath);
-        std::cout << "Nom de l'image extraite (laisser vide pour auto) : ";
-        std::getline(std::cin, outPath);
-
-        // Générer un nom automatique si vide
-        if (outPath.empty())
-        {
-            outPath = generateUniqueFilename("image_extraite", ".png");
-            std::cout << "Sauvegarde automatique : " << outPath << "\n";
-        }
-        else if (outPath.find("../out/") != 0)
-        {
-            string ext = getExt(outPath);
-            if (ext.empty()) ext = ".png";
-            size_t lastSlash = outPath.find_last_of("/\\");
-            string filename = (lastSlash != string::npos) ? outPath.substr(lastSlash + 1) : outPath;
-            outPath = "../out/" + filename;
-            std::cout << " Redirection vers : " << outPath << "\n";
-        }
-
-        auto carrier = loadImage(inputPath, cw, ch, cc);
-    if (!carrier) return EXIT_FAILURE;
-
-        int bits = 0;
-        auto secret = extractImageFromImage(carrier, cw, ch, cc, bits, w, h, c);
-        if (!secret.empty())
-        {
-            saveImage(outPath, secret.data(), w, h, c);
-            std::cout << "\n Image extraite avec succès -> " << outPath << "\n";
-        }
-        else
-        {
-            std::cerr << "\n Erreur : impossible d'extraire l'image cachée.\n";
-        }
-
-        stbi_image_free(carrier);
-    }
-
-    // ===== OPTION 3: CACHER UN TEXTE =====
-    else if (choix == 3)
-    {
-        std::cout << "\n=== CACHER UN MESSAGE TEXTE ===\n";
-        std::cout << "Image porteuse : ";
-        std::getline(std::cin, carrierPath);
-        std::cout << "Message à cacher : ";
-        std::getline(std::cin, message);
-        std::cout << "Nom du fichier de sortie (laisser vide pour auto) : ";
-        std::getline(std::cin, outPath);
-
-        // Générer un nom automatique si vide
-        if (outPath.empty())
-        {
-            string ext = (getExt(carrierPath) == ".bmp") ? ".bmp" : ".png";
-            outPath = generateUniqueFilename("texte_cache", ext);
-            std::cout << " Sauvegarde automatique : " << outPath << "\n";
-        }
-        else if (outPath.find("../out/") != 0)
-        {
-            string ext = getExt(outPath);
-            if (ext.empty()) ext = ".png";
-            size_t lastSlash = outputPath.find_last_of("/\\");
-            string filename = (lastSlash != string::npos) ? outputPath.substr(lastSlash + 1) : outputPath;
-            outputPath = "../out/" + filename;
-            std::cout << " Redirection vers : " << outputPath << "\n";
-        }
-
-        auto carrier = loadImage(carrierPath, w, h, c);
-        if (!carrier) return EXIT_FAILURE;
-
-        int bitsPerChannel = 0;
-        auto encoded = hideTextInImage(carrier, w, h, c, message, bitsPerChannel);
-
-        if (!encoded.empty() && saveImage(outPath, encoded.data(), w, h, c))
-            std::cout << "\n Message caché avec succès dans " << outPath << "\n";
-        else
-            std::cerr << "\n Erreur : échec de l'encodage ou de la sauvegarde.\n";
-
-        stbi_image_free(carrier);
-    }
-
-    // ===== OPTION 4: EXTRAIRE UN TEXTE =====
-    else if (choix == 4)
-    {
-        std::cout << "\n=== EXTRAIRE UN MESSAGE TEXTE ===\n";
-        std::cout << "Image contenant le message : ";
-        std::getline(std::cin, inputPath);
-        std::cout << "Sauvegarder dans un fichier .txt ? (o/n) : ";
-        char save;
-        std::cin >> save;
-        std::cin.ignore();
-
-        if (save == 'o' || save == 'O')
-        {
-            std::cout << "Nom du fichier de sortie (laisser vide pour auto) : ";
-            std::getline(std::cin, outputPath);
-
-            // Générer un nom automatique si vide
-            if (outputPath.empty())
-            {
-                outputPath = generateUniqueFilename("message_extrait", ".txt");
-                std::cout << " Sauvegarde automatique : " << outputPath << "\n";
-            }
-            else if (outputPath.find("../out/") != 0)
-            {
-                string ext = getExt(outputPath);
-                if (ext.empty()) ext = ".txt";
-                size_t lastSlash = outputPath.find_last_of("/\\");
-                string filename = (lastSlash != string::npos) ? outputPath.substr(lastSlash + 1) : outputPath;
-                outputPath = "../out/" + filename;
-                std::cout << " Redirection vers : " << outputPath << "\n";
-            }
-        }
-
-        auto img = loadImage(inputPath, w, h, c);
-        if (!img) return EXIT_FAILURE;
-
-        int bits = 0;
-        message = extractTextFromImage(img, w, h, c, bits);
-        if (!message.empty())
-        {
-            std::cout << "\n MESSAGE EXTRAIT :\n";
-            std::cout << "─────────────────────────────────────────\n";
-            std::cout << message << "\n";
-            std::cout << "─────────────────────────────────────────\n";
-
-            // Sauvegarder si demandé
-            if (!outputPath.empty())
-            {
-                saveMessageToFile(message, outputPath);
-            }
-        }
-        else
-        {
-            std::cerr << "\n Erreur : impossible d'extraire le message.\n";
-        }
-
-        stbi_image_free(img);
-    }
-
-    // ===== OPTION 5: COMPARER DEUX IMAGES =====
-    else if (choix == 5)
-    {
-        //std::string img1, img2;
-
-        std::cout << "\n=== COMPARER DEUX IMAGES ===\n";
-        std::cout << "Première image (originale) : ";
-        std::getline(std::cin, img1);
-        std::cout << "Deuxième image (modifiée) : ";
-        std::getline(std::cin, img2);
-
-        compareImages(img1, img2);
-    }
-
-    // ===== OPTION 6: ANALYSER HISTOGRAMME =====
-    else if (choix == 6)
-    {
-        //std::string imgPath;
-
-        std::cout << "\n=== ANALYSER L'HISTOGRAMME ===\n";
-        std::cout << "Image à analyser : ";
-        std::getline(std::cin, imgPath);
-
-        generateHistogram(imgPath);
-    }
-
-    // ===== OPTION 7: DETECTER STEGANOGRAPHIE =====
-    else if (choix == 7)
-    {
-        //std::string imgPath;
-
-        std::cout << "\n=== DETECTER STEGANOGRAPHIE ===\n";
-        std::cout << "Image à analyser : ";
-        std::getline(std::cin, imgPath);
-
-        analyzeImageForSteganography(imgPath);
-    }
-    return EXIT_SUCCESS;
-}
-*/
-// ========== FIN CODE LEGACY ==========

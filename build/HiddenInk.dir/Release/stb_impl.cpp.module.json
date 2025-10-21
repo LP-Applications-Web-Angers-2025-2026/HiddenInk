@@ -1,0 +1,13 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "HiddenInk.dir\\Release\\stb_impl.obj",
+            "outputs": [
+                "HiddenInk.dir\\Release\\"
+            ],
+            "requires": []
+        }
+    ]
+}

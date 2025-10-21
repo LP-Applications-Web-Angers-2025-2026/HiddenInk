@@ -1,0 +1,13 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "HiddenInk.dir\\Release\\bmp_convert.obj",
+            "outputs": [
+                "HiddenInk.dir\\Release\\"
+            ],
+            "requires": []
+        }
+    ]
+}
