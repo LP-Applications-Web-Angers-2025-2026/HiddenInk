@@ -19,11 +19,11 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
 
     unsigned char mask;
 
-    if (!supportedFile(fileToHide))
-    {
-        cout << "[HiddenInk] Erreur : ce type de fichier n'est pas supporté !" << endl;
-        return;
-    }
+    //CHIFFREMENT DU MESSAGE
+    // Lire le contenu du fichier en tant que string (clair)
+    ifstream fileToHideStream(fileToHide, ios::binary);
+    string plainContent((istreambuf_iterator<char>(fileToHideStream)), istreambuf_iterator<char>());
+    fileToHideStream.close();
 
     binFile = lireFichierKey(fileToHide, key);
 
@@ -52,19 +52,15 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
         }
     }
 
-    signatureSize = getSignatureSize();
-    // Récupération de la signature en binaire
-    signatureBinaire = getSignatureBinary();
-
     // Convertit et stock le message en binaire dans messageBinaire
-    messageBinaire += signatureBinaire;
+    messageBinaire += getSignatureBinary();
     messageBinaire += getBaliseBinary(true);
     messageBinaire += binFile;
     messageBinaire += getBaliseBinary(false);
 
-    // Vérifier que le message tient dans l'image
-    if (messageBinaire.size() > data.size() - headerSize) {
-        cerr << "Erreur : le message est trop grand pour être caché dans cette image !" << endl;
+    // Vérification que le message avec la signature et les balises peut être inséré dans l'image
+    if (!messageCanFitInImage(messageBinaire, data, headerSize))
+    {
         return;
     }
 

@@ -165,7 +165,7 @@ size_t getBaliseBinarySize() {
 }
 
 /**
- * Vérifie si le fichier a une extension supportée
+ * Vérifie si le fichier a une extension supportée (.txt, .bmp ou .png)
  * @param filePath Le chemin du fichier à vérifier
  * @return True si l'extension est supportée, false sinon
  */
@@ -221,6 +221,88 @@ string lireFichierKey(string fileToHide, string key)
 }
 
 /**
+ * Vérifie si le message peut être inséré dans l'image
+ * @param messageBinaire Le message à cacher en binaire
+ * @param data Les données de l'image
+ * @param headerSize La taille de l'en-tête de l'image
+ * @return true si le message peut être inséré, false sinon
+ */
+bool messageCanFitInImage(const string& messageBinaire, const vector<unsigned char>& data, size_t headerSize)
+{
+    if (messageBinaire.size() > data.size() - headerSize)
+    {
+        cerr << "[HiddenInk] Erreur : le message est trop grand pour être caché dans cette image !" << endl;
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Vérifie qu'un fichier source existe et peut être ouvert
+ * @param inputPath Chemin du fichier à vérifier
+ * @return true si le fichier est accessible, false sinon
+ */
+bool ouvrirfichierSource(string inputPath)
+{
+    ifstream file(inputPath, std::ios::binary);
+    if (!file.is_open())
+    {
+        cout << "[HiddenInk] Erreur : le fichier image ne s'ouvre pas !" << inputPath << std::endl;
+        // Femeture du fichier
+        return false;
+    }
+    // Femeture du fichier
+    file.close();
+    return true;
+}
+
+/**
+ * Vérifie si un fichier à cacher existe et peut être ouvert
+ * @param fileToHide Chemin du fichier à vérifier
+ * @return true si le fichier est accessible, false sinon
+ */
+bool ouvrirfichierMessage(string fileToHide)
+{
+    ifstream file(fileToHide, ios::binary);
+    if (!file.is_open())
+    {
+        cout << "[HiddenInk] Erreur : le fichier image ne s'ouvre pas !" << fileToHide << endl;
+        return false; // Femeture du fichier
+    }
+    // Femeture du fichier
+    file.close();
+    return true;
+}
+
+/**
+ * Vérifie si un fichier est valide pour le traitement en stéganographie
+ * 
+ * @param fichier Le chemin du fichier à vérifier
+ * @return false si le fichier est valide, true s'il y a une erreur
+ *
+ * Cette fonction effectue deux vérifications :
+ * - Vérifie si l'extension du fichier est supportée (.txt, .bmp, .png)
+ * - Vérifie si le fichier existe et peut être ouvert
+ */
+bool VerifFichier(string fichier)
+{
+    bool reussite = true;
+
+    // Vérification du format du fichier à cacher
+    if (!supportedFile(fichier))
+    {
+        cout << "[HiddenInk] Erreur : Le format du fichier n'est pas supporté." << endl;
+        reussite = false;
+    }
+
+    // Vérification de l'ouverture du fichier source
+    if (!ouvrirfichierMessage(fichier)) reussite = false;
+
+    return reussite;
+}
+
+
+/**
  * Affiche les instructions d'utilisation et les options disponibles pour le programme de stéganographie avancée.
  *
  * Cette méthode présente sous forme détaillée les différents modes de fonctionnement du programme,
@@ -228,6 +310,7 @@ string lireFichierKey(string fileToHide, string key)
  * cacher ou extraire des images et du texte, comparer des images, analyser des histogrammes et
  * détecter la présence de stéganographie.
  */
+// TODO : METTRE A JOUR
 void afficherAide()
 {
     std::cout << "=== STEGANOGRAPHIE AVANCEE ===\n\n";

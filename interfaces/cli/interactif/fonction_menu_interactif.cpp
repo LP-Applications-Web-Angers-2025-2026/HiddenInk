@@ -105,10 +105,30 @@ static int menuCacherTexte()
         return EXIT_FAILURE;
     }
 
-    cout << "\nImage porteuse : ";
-    getline(cin, carrierPath);
-    cout << "Fichier texte à cacher (.txt) : ";
-    getline(cin, message);
+    // la fonction vérifie que le fichier soit existant, accessible et supporté.
+    while (true)
+    {
+        cout << "\nEntrez une image porteuse : " << flush;
+        getline(cin, carrierPath);
+
+        if (VerifFichier(carrierPath))
+            break; // fichier OK, on sort de la boucle
+
+        cout << endl; // pour lisibilité avant de redemander
+    }
+
+    // la fonction vérifie que le fichier soit existant, accessible et supporté.
+    while (true)
+    {
+        cout << "\n Fichier texte à cacher (.txt) : " << endl;
+        getline(cin, message);
+
+        if (VerifFichier(message))
+            break; // fichier OK, on sort de la boucle
+
+        cout << endl; // pour lisibilité avant de redemander
+    }
+
     cout << "Nom du fichier de sortie (laisser vide pour auto) : ";
     getline(cin, outPath);
     cout << "Chiffrer le message ? (o/n) : ";
@@ -343,6 +363,9 @@ static int menuExtraire()
         else
         {
             // Utiliser les fonctions PNG pour PNG/JPG
+            string key;
+            cout << "Clé (hex) utilisée lors du cachage (laisser vide si aucune) : ";
+            getline(cin, key);
             auto img = loadImage(inputPath, w, h, c);
             if (!img) return EXIT_FAILURE;
 
