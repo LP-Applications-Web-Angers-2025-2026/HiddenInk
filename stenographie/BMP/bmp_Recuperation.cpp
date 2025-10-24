@@ -115,8 +115,7 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
     }
 
     // --- Sauvegarde du contenu extrait ---
-    const string outputPath = "../out/fichier_extrait" + extension;
-    std::filesystem::create_directories("../out");
+    const string outputPath = "./fichier_extrait" + extension;
     ofstream outFile(outputPath, ios::binary);
     if (!outFile)
     {

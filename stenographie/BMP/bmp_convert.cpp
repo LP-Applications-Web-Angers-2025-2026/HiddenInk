@@ -73,9 +73,6 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
         modifiedData[headerSize + i] |= ((messageBinaire[i] - '0') << bitPos);
     }
 
-    // Créer le dossier out s'il n'existe pas
-    std::filesystem::create_directories("out");
-
     // Sauvegarder l'image modifiée
     ofstream outFile(outputPath, ios::binary);
     outFile.write(reinterpret_cast<char*>(modifiedData.data()), modifiedData.size());

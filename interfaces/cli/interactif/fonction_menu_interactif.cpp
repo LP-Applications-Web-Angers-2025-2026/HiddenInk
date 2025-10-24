@@ -25,7 +25,7 @@ using namespace std;
  */
 static void ensureOutDir()
 {
-    const std::filesystem::path outDir = "../out";
+    const std::filesystem::path outDir = "./";
     if (!std::filesystem::exists(outDir))
     {
         std::filesystem::create_directories(outDir);
@@ -47,7 +47,7 @@ static string generateUniqueFilename(const string& prefix, const string& ext)
     auto time = std::chrono::system_clock::to_time_t(now);
 
     std::stringstream ss;
-    ss << "../out/" << prefix << "_" << std::put_time(std::localtime(&time), "%Y%m%d_%H%M%S") << ext;
+    ss << "./" << prefix << "_" << std::put_time(std::localtime(&time), "%Y%m%d_%H%M%S") << ext;
     return ss.str();
 }
 
@@ -146,13 +146,13 @@ static int menuCacherTexte()
         outPath = generateUniqueFilename("texte_cache", formatExt); // change le nom du texte_cacher bof
         cout << " Sauvegarde automatique : " << outPath << "\n";
     }
-    else if (outPath.find("out/") != 0)
+    else if (outPath.find("./") != 0)
     {
         string ext = getExt(outPath);
         if (ext.empty()) ext = formatExt;
         size_t lastSlash = outPath.find_last_of("/\\");
         string filename = (lastSlash != string::npos) ? outPath.substr(lastSlash + 1) : outPath;
-        outPath = "../out/" + filename;
+        outPath = "./" + filename;
         cout << " Redirection vers : " << outPath << "\n";
     }
 
@@ -231,13 +231,13 @@ static int menuCacherImage()
         outPath = generateUniqueFilename("image_cachee", formatExt);
         cout << " Sauvegarde automatique : " << outPath << "\n";
     }
-    else if (outPath.find("out/") != 0)
+    else if (outPath.find("./") != 0)
     {
         string ext = getExt(outPath);
         if (ext.empty()) ext = formatExt;
         size_t lastSlash = outPath.find_last_of("/\\");
         string filename = (lastSlash != string::npos) ? outPath.substr(lastSlash + 1) : outPath;
-        outPath = "../out/" + filename;
+        outPath = "./" + filename;
         cout << " Redirection vers : " << outPath << "\n";
     }
 
@@ -302,13 +302,13 @@ static int menuExtraire()
                 outputPath = generateUniqueFilename("message_extrait", ".txt");
                 cout << " Sauvegarde automatique : " << outputPath << "\n";
             }
-            else if (outputPath.find("out/") != 0)
+            else if (outputPath.find("./") != 0)
             {
                 string ext = getExt(outputPath);
                 if (ext.empty()) ext = ".txt";
                 size_t lastSlash = outputPath.find_last_of("/\\");
                 string filename = (lastSlash != string::npos) ? outputPath.substr(lastSlash + 1) : outputPath;
-                outputPath = "../out/" + filename;
+                outputPath = "./" + filename;
                 cout << " Redirection vers : " << outputPath << "\n";
             }
         }
@@ -353,13 +353,13 @@ static int menuExtraire()
             outPath = generateUniqueFilename("image_extraite", ".png");
             cout << " Sauvegarde automatique : " << outPath << "\n";
         }
-        else if (outPath.find("out/") != 0)
+        else if (outPath.find("./") != 0)
         {
             string ext = getExt(outPath);
             if (ext.empty()) ext = ".png";
             size_t lastSlash = outPath.find_last_of("/\\");
             string filename = (lastSlash != string::npos) ? outPath.substr(lastSlash + 1) : outPath;
-            outPath = "../out/" + filename;
+            outPath = "./" + filename;
             cout << " Redirection vers : " << outPath << "\n";
         }
 
