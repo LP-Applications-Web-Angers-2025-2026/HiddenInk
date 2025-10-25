@@ -32,12 +32,12 @@ int hidePNGText(const string& carrierPath, const string& textOrFilePath,
     
     if (success)
     {
-        cout << "\n✓ Message caché avec succès dans " << outputPath << endl;
+        cout << "\n Message caché avec succès dans " << outputPath << endl;
         return EXIT_SUCCESS;
     }
     else
     {
-        cerr << "\n✗ Erreur : échec de l'encodage ou de la sauvegarde." << endl;
+        cerr << "\n Erreur : échec de l'encodage ou de la sauvegarde." << endl;
         return EXIT_FAILURE;
     }
 }

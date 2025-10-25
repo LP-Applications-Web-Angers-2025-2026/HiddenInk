@@ -12,6 +12,27 @@
 
 using namespace std;
 
+// ============ SIGNATURES ET BALISES ============
+
+// Signature pour image cachée : "IMG" en binaire
+inline string getSignatureBinary() {
+    return "010010010100110101000111"; // "IMG" en ASCII binaire
+}
+
+inline size_t getSignatureBinarySize() {
+    return getSignatureBinary().size();
+}
+
+// Balise d'ouverture/fermeture
+inline string getBaliseBinary(bool ouverture) {
+    if (ouverture) return "11110000"; // Balise de début
+    else return "00001111"; // Balise de fin
+}
+
+inline size_t getBaliseBinarySize() {
+    return 8; // 8 bits par balise
+}
+
 // ============ FONCTIONS IMAGE ============
 
 // Charger une image (retourne pointeur et remplit largeur, hauteur, canaux)
