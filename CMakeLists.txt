@@ -25,8 +25,7 @@ add_executable(HiddenInk main.cpp
         stenographie/utils/histogramme/histogram.cpp
         stenographie/utils/histogramme/histogram.h
         stenographie/utils/histogramme/histogram.cpp
-        stenographie/main_helpers.hpp
-        stenographie/main_helpers.hpp
         interfaces/cli/interactif/fonction_menu_interactif.cpp
         interfaces/cli/interactif/fonction_menu_interactif.cpp
-        interfaces/cli/interactif/fonction_menu_interactif.h)
+        interfaces/cli/interactif/fonction_menu_interactif.h
+        interfaces/cli/interactif/fonction_menu_interactif.cpp)
