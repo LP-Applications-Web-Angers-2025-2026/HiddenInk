@@ -15,8 +15,6 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
 {
     string binFile, messageBinaire, signatureBinaire;
 
-    size_t signatureSize;
-
     unsigned char mask;
 
     //CHIFFREMENT DU MESSAGE
@@ -77,6 +75,10 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
     ofstream outFile(outputPath, ios::binary);
     outFile.write(reinterpret_cast<char*>(modifiedData.data()), modifiedData.size());
     outFile.close();
+
+    // Sauvegarder la clé
+    saveKeyFile(outputPath, key);
+
 
     cout << "[HiddenInk] Votre fichier a bien été caché" << endl;
 }
