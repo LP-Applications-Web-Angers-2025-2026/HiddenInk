@@ -1,0 +1,27 @@
+  // --- Sauvegarde du contenu extrait ---
+    const string outputPath = "../../out/fichier_extrait" + extension;
+    std::filesystem::create_directories("out");
+    ofstream outFile(outputPath, ios::binary);
+    if (!outFile)
+    {
+        return "4";
+    }
+
+    if (extension == ".txt")
+    {
+        outFile << messageBinaire;
+        cout << "Message extrait : " << messageBinaire << "\n";
+    }
+    else // fichier binaire (image)
+    {
+        // messageBinaire est déjà les données binaires sous forme de string
+        outFile.write(messageBinaire.data(), messageBinaire.size());
+    }
+
+    outFile.close();
+    // --- Retour console / texte ---
+    return "[HiddenInk] " +
+        std::string(extension == ".txt" ? "Texte"
+            : (extension == ".png" ? "Image PNG" : "Image BMP")) +
+        " extrait(e) avec succès dans " + outputPath;
+}

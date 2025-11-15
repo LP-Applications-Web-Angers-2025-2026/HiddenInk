@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 4.0)
 project(HiddenInk)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(HiddenInk main.cpp
         stenographie/BMP/bmp_convert.cpp
@@ -29,3 +30,8 @@ add_executable(HiddenInk main.cpp
         interfaces/cli/interactif/fonction_menu_interactif.cpp
         interfaces/cli/interactif/fonction_menu_interactif.h
         interfaces/cli/interactif/fonction_menu_interactif.cpp)
+
+if (MINGW)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
+endif ()
