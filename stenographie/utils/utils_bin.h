@@ -20,6 +20,7 @@ size_t getBaliseSize();
 string getBaliseBinary(bool ouverture);
 size_t getBaliseBinarySize();
 string lireFichierKey(string filetohide, string key);
+string cleanPath(string s);
 
 void afficherAide();
 

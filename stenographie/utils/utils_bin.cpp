@@ -301,6 +301,35 @@ bool VerifFichier(string fichier)
     return reussite;
 }
 
+/**
+ * @brief Nettoie une chaîne représentant un chemin ou un lien.
+ *
+ * Cette fonction supprime :
+ * - les espaces au début et à la fin de la chaîne ;
+ * - une paire de guillemets ou d'apostrophes entourant complètement la chaîne.
+ *
+ * Elle permet ainsi d'accepter des chemins ou URLs saisis entre guillemets,
+ * apostrophes ou contenant des espaces superflus.
+ *
+ * @param s La chaîne brute entrée par l'utilisateur.
+ * @return La chaîne nettoyée, sans guillemets ni espaces inutiles.
+ */
+string cleanPath(string s)
+{
+    // Supprimer espaces au début et à la fin
+    while (!s.empty() && isspace(s.front())) s.erase(s.begin());
+    while (!s.empty() && isspace(s.back())) s.pop_back();
+
+    // Si la chaîne commence et finit par le même guillemet, les retirer
+    if (s.size() >= 2 &&
+        ((s.front() == '"' && s.back() == '"') ||
+            (s.front() == '\'' && s.back() == '\'')))
+    {
+        s = s.substr(1, s.size() - 2);
+    }
+
+    return s;
+}
 
 /**
  * Affiche les instructions d'utilisation et les options disponibles pour le programme de stéganographie avancée.
@@ -310,12 +339,11 @@ bool VerifFichier(string fichier)
  * cacher ou extraire des images et du texte, comparer des images, analyser des histogrammes et
  * détecter la présence de stéganographie.
  */
-// TODO : METTRE A JOUR
 void afficherAide()
 {
     std::cout << "=== STEGANOGRAPHIE AVANCEE ===\n\n";
     std::cout << "Usage:\n";
-    std::cout << "  Mode interactif : ./main\n";
+    std::cout << "  Mode interactif : ./main interact\n";
     std::cout << "  Mode démonstration : ./main demo\n\n";
     std::cout << "  Cacher une image : ./main hide-image <image_porteuse> <image_secrete> <sortie.png>\n";
     std::cout << "  Extraire une image : ./main extract-image <image_avec_secret> <sortie.png>\n\n";

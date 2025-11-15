@@ -15,6 +15,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <fstream>
 
 
 using namespace std;
@@ -110,6 +111,7 @@ static int menuCacherTexte()
     {
         cout << "\nEntrez une image porteuse : " << flush;
         getline(cin, carrierPath);
+        carrierPath = cleanPath(carrierPath);
 
         if (VerifFichier(carrierPath))
             break; // fichier OK, on sort de la boucle
@@ -120,17 +122,39 @@ static int menuCacherTexte()
     // la fonction vérifie que le fichier soit existant, accessible et supporté.
     while (true)
     {
-        cout << "\n Fichier texte à cacher (.txt) : " << endl;
+        cout << "\nFichier texte à cacher (.txt) : " << endl;
         getline(cin, message);
+        message = cleanPath(message);
 
         if (VerifFichier(message))
-            break; // fichier OK, on sort de la boucle
+        {
+            // OK : le fichier existe
+            break;
+        }
+        // Le fichier n'existe pas → on crée un fichier et on y stocke le texte
+        string outputName = "message_saisi.txt";
 
-        cout << endl; // pour lisibilité avant de redemander
+        ofstream out(outputName);
+        if (!out)
+        {
+            cerr << "Erreur : impossible de creer le fichier." << endl;
+            continue;
+        }
+
+        out << message;
+        out.close();
+
+        cout << "Le texte saisi n'est pas un fichier. Il a ete enregistre dans : "
+            << outputName << endl;
+
+        // On utilise ce fichier nouvellement créé
+        message = outputName;
+        break;
     }
 
     cout << "Nom du fichier de sortie (laisser vide pour auto) : ";
     getline(cin, outPath);
+    outPath = cleanPath(outPath);
     cout << "Chiffrer le message ? (o/n) : ";
     cin >> encryptChoice;
     cin.ignore();
@@ -182,7 +206,6 @@ static int menuCacherTexte()
  */
 static int menuCacherImage()
 {
-    int cw, ch, cc, sw, sh, sc;
     string carrierPath, secretPath, outPath, key = "";
     char encryptChoice;
 
@@ -212,10 +235,16 @@ static int menuCacherImage()
 
     cout << "\nImage porteuse : ";
     getline(cin, carrierPath);
+    carrierPath = cleanPath(carrierPath);
+
     cout << "Image à cacher : ";
     getline(cin, secretPath);
+    secretPath = cleanPath(secretPath);
+
     cout << "Nom du fichier de sortie (laisser vide pour auto) : ";
     getline(cin, outPath);
+    outPath = cleanPath(outPath);
+
     cout << "Chiffrer le message ? (o/n) : ";
     cin >> encryptChoice;
     cin.ignore();
@@ -267,7 +296,6 @@ static int menuCacherImage()
  */
 static int menuExtraire()
 {
-    int w, h, c, cw, ch, cc;
     string inputPath, outPath, outputPath, message;
 
     cout << "          EXTRAIRE DES DONNÉES         \n";
@@ -285,8 +313,11 @@ static int menuExtraire()
     {
         // Extraire texte
         cout << "\n=== EXTRAIRE UN MESSAGE TEXTE ===\n";
+
         cout << "Image contenant le message : ";
         getline(cin, inputPath);
+        inputPath = cleanPath(inputPath);
+
         cout << "Sauvegarder dans un fichier .txt ? (o/n) : ";
         char save;
         cin >> save;
@@ -321,6 +352,7 @@ static int menuExtraire()
             string key;
             cout << "Clé (hex) utilisée lors du cachage : ";
             getline(cin, key);
+            key = cleanPath(key);
 
 
             string result = bmpRecup(inputPath, 0, key); // bitPos = 0 par défaut
@@ -343,10 +375,14 @@ static int menuExtraire()
     {
         // Extraire image
         cout << "\n=== EXTRAIRE UNE IMAGE ===\n";
+
         cout << "Image contenant l'image cachée : ";
         getline(cin, inputPath);
+        inputPath = cleanPath(inputPath);
+
         cout << "Nom de l'image extraite (laisser vide pour auto) : ";
         getline(cin, outPath);
+        outPath = cleanPath(outPath);
 
         if (outPath.empty())
         {
@@ -371,6 +407,8 @@ static int menuExtraire()
             string key;
             cout << "Clé (hex) utilisée lors du cachage (laisser vide si aucune) : ";
             getline(cin, key);
+            key = cleanPath(key);
+
             string result = bmpRecup(inputPath, 0, key); // bitPos = 0 par défaut
             cout << result << "\n";
         }
@@ -424,24 +462,35 @@ static int menuAnalyserImage()
     case 2:
     case 3:
         cout << "\n=== COMPARER DEUX IMAGES ===\n";
+
         cout << "Première image (originale) : ";
         getline(cin, img1);
+        img1 = cleanPath(img1);
+
         cout << "Deuxième image (modifiée) : ";
         getline(cin, img2);
+        img2 = cleanPath(img2);
+
         compareImages(img1, img2);
         break;
 
     case 4:
         cout << "\n=== ANALYSER L'HISTOGRAMME ===\n";
+
         cout << "Image à analyser : ";
         getline(cin, imgPath);
+        imgPath = cleanPath(imgPath);
+
         generateHistogram(imgPath);
         break;
 
     case 5:
         cout << "\n=== DETECTER STEGANOGRAPHIE ===\n";
+
         cout << "Image à analyser : ";
         getline(cin, imgPath);
+        imgPath = cleanPath(imgPath);
+
         analyzeImageForSteganography(imgPath);
         break;
 
