@@ -2,6 +2,7 @@
 #include "../external/stb_image.h"
 #include "../external/stb_image_write.h"
 #include "../utils_bin.h"
+#include "../encrypt/encrypt.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -113,7 +114,8 @@ inline bool calculateOptimalSize(int cw, int ch, int cc, int& sw, int& sh, int s
 // Cacher une image dans une autre (avec signature et balises - logique BMP adaptée)
 inline vector<unsigned char> hideImageInImage(unsigned char* carrier, int cw, int ch, int cc,
                                               unsigned char* secret, int sw, int sh, int sc,
-                                              int bitsPerChannel = 1) {
+                                              int bitsPerChannel = 1, const string& key = "")
+{
     // Construire le message binaire complet
     string messageBinaire;
     
@@ -128,10 +130,21 @@ inline vector<unsigned char> hideImageInImage(unsigned char* carrier, int cw, in
         bitset<32> bits(val);
         messageBinaire += bits.to_string();
     }
-    
-    // 4. Ajouter les données de l image secrète
-    for (int i = 0; i < sw * sh * sc; ++i) {
-        bitset<8> bits(secret[i]);
+
+    // 4. Chiffrer les données de l'image secrète si clé fournie
+    vector<unsigned char> dataToHide(secret, secret + (sw * sh * sc));
+    if (!key.empty())
+    {
+        string dataStr(dataToHide.begin(), dataToHide.end());
+        string encrypted = xor_encrypt(dataStr, key);
+        dataToHide.assign(encrypted.begin(), encrypted.end());
+        cout << "🔐 Données d'image chiffrées avec la clé fournie.\n";
+    }
+
+    // 4. Ajouter les données de l image secrète (chiffrées ou non)
+    for (unsigned char byte : dataToHide)
+    {
+        bitset<8> bits(byte);
         messageBinaire += bits.to_string();
     }
     
@@ -227,7 +240,9 @@ inline int detectBitsPerChannel(unsigned char* carrier, int cw, int ch, int cc) 
 
 // Extraire une image cachée (avec vérification de signature et balises - logique BMP adaptée)
 inline vector<unsigned char> extractImageFromImage(unsigned char* carrier, int cw, int ch, int cc,
-                                                   int bitsPerChannel, int& outW, int& outH, int& outC) {
+                                                   int bitsPerChannel, int& outW, int& outH, int& outC,
+                                                   const string& key = "")
+{
     // Si bitsPerChannel == 0, détecter automatiquement
     if (bitsPerChannel == 0) {
         bitsPerChannel = detectBitsPerChannel(carrier, cw, ch, cc);
@@ -304,6 +319,16 @@ inline vector<unsigned char> extractImageFromImage(unsigned char* carrier, int c
         string octetBinaire = contenu.substr(bitIndex, 8);
         secret[i] = static_cast<unsigned char>(bitset<8>(octetBinaire).to_ulong());
     }
-    
+
+    // Déchiffrer si clé fournie
+    if (!key.empty())
+    {
+        string dataStr(secret.begin(), secret.end());
+        string byteKey = hex_to_key(key);
+        string decrypted = xor_encrypt(dataStr, byteKey);
+        secret.assign(decrypted.begin(), decrypted.end());
+        cout << "🔓 Données d'image déchiffrées avec la clé fournie.\n";
+    }
+
     return secret;
 }
