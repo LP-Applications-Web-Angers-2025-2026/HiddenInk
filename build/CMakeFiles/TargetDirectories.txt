@@ -1,3 +1,0 @@
-C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/build/CMakeFiles/HiddenInk.dir
-C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/build/CMakeFiles/edit_cache.dir
-C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/build/CMakeFiles/rebuild_cache.dir
