@@ -3,26 +3,25 @@
 #include <iostream>
 #include <ostream>
 #include <string>
-
-#include "../stenographie/main_helpers.hpp"
-#include "../stenographie/BMP/bmp_convert.h"
-#include "../stenographie/BMP/bmp_Recuperation.h"
-#include "../stenographie/utils/utils_bin.h"
-#include "../stenographie/utils/analysis/image_analysis.hpp"
-#include "../stenographie/utils/stegano/stegano_text.hpp"
-#include "../stenographie/utils/stegano/stegano_imageinimage.hpp"
-#include "../stenographie/utils/histogramme/histogram.h"
-#include "../stenographie/PNG/fonction_menu.h"
-#include "../stenographie/utils/encrypt/encrypt.h"
-#include "../stenographie/utils/utils_bin.h"
+#include "../../../stenographie/BMP/bmp_convert.h"
+#include "../../../stenographie/BMP/bmp_Recuperation.h"
+#include "../../../stenographie/utils/stegano/stegano_text.hpp"
+#include "../interactif/fonction_menu_interactif.h"
 
 
 using namespace std;
 
+/**
+ * Fonction principale qui gère la dissimulation d'un message dans une image.
+ * @param argc Nombre d'arguments passés en ligne de commande
+ * @param argv Tableau contenant les arguments passés en ligne de commande
+ * @return 0 si succès, 1 si erreur
+ */
 int hide(int argc, char* argv[]) {
     string inputPath = argv[2];
     string fileToHide = argv[3];
     string outputPath = argv[4];
+    string key = argv[5];
     int bitPos = bit_position(argc, argv, 5);
     if (bitPos == -1) return 1;
 
@@ -32,10 +31,29 @@ int hide(int argc, char* argv[]) {
     }
 
     // Cacher le message dans le bit spécifié
-    bmpConvert(inputPath, fileToHide, outputPath, bitPos);
+    bmpConvert(inputPath, fileToHide, outputPath, bitPos, key);
     return 0;
 }
 
+/**
+ * Extrait un message caché d'une image BMP en utilisant la stéganographie.
+ * 
+ * @param argc Nombre d'arguments de la ligne de commande
+ * @param argv Tableau des arguments de la ligne de commande contenant:
+ *            - argv[2]: Chemin vers l'image BMP source
+ *            - argv[3]: Clé de déchiffrement en format hexadécimal
+ *            - argv[4]: (Optionnel) Position du bit de dissimulation (1-8, défaut=1)
+ * 
+ * @return Code de retour :
+ *         - 0 : Extraction réussie
+ *         - 1 : Erreur lors de l'extraction
+ * 
+ * @note Le message extrait est affiché sur la sortie standard.
+ *       Des messages d'erreur spécifiques sont affichés si :
+ *       - Le processus d'extraction échoue
+ *       - Aucun message n'est trouvé dans l'image
+ *       - Les balises de début/fin sont invalides/corrompues
+ */
 int extract(int argc, char* argv[]) {
     string inputPath = argv[2];
     string keyHex = argv[3];
@@ -57,10 +75,22 @@ int extract(int argc, char* argv[]) {
     return 0;
 }
 
+
+/**
+ * Lance le mode interactif du programme permettant de choisir différentes options de stéganographie
+ * @return 0 si succès, 1 si erreur
+ */
 int interact() {
     return runInteractiveMode();
 }
 
+/**
+ * Détermine la position du bit où les données seront cachées ou extraites dans une image
+ * @param argc Nombre d'arguments passés en ligne de commande
+ * @param argv Tableau contenant les arguments passés en ligne de commande
+ * @param arg_index Position dans argv[] de l'argument optionnel spécifiant la position du bit (1-8)
+ * @return Position du bit (0-7), ou -1 en cas d'erreur. Par défaut retourne 0 (LSB)
+ */
 int bit_position(int argc, char* argv[], int arg_index) {
     int bitNum = 1; // Par défaut LSB
     if (argc > arg_index) {
@@ -78,10 +108,20 @@ int bit_position(int argc, char* argv[], int arg_index) {
     return bitNum - 1; // 0 pour LSB, 7 pour MSB
 }
 
+/**
+ * Vérifie si un fichier existe dans le système de fichiers
+ * @param path Chemin du fichier à vérifier
+ * @return true si le fichier existe, false sinon
+ */
 bool validate_file_exists(const std::string& path) {
     return path != "" && std::filesystem::exists(path);
 }
 
+/**
+ * Affiche les instructions d'utilisation du programme.
+ * Cette fonction affiche la syntaxe correcte et les options qui peuvent être utilisées
+ * lors de l'exécution du programme, incluant les modes "HIDE", "EXTRACT", "HISTO", et "INTERACT".
+ */
 void print_usage() {
     cerr << "Usage: " << " HIDE <input_bmp> <file_to_hide> <output_bmp> [bit_position]" << endl;
     cerr << "       " << " EXTRACT <input_bmp> <key> [bit_position]" << endl;
@@ -89,6 +129,15 @@ void print_usage() {
     cerr << "       " << " INTERACT" << endl;
 }
 
+/**
+ * Lance le mode interactif permettant de choisir les différentes opérations de stéganographie disponibles.
+ * Affiche un menu avec 4 options :
+ * 1. Cacher un texte dans une image
+ * 2. Cacher une image dans une image 
+ * 3. Extraire des données
+ * 4. Analyser une image
+ * @return 0 si succès, 1 si erreur lors de la saisie utilisateur
+ */
 int runInteractiveMode()
 {
     cout << "    STEGANOGRAPHIE AVANCEE             \n";

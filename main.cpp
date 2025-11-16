@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <ostream>
-#include "fonctions_main/fonctions_main.h"
+#include "interfaces/cli/non_interactif/fonctions_main.h"
 
 using namespace std;
 
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     }
     else if (mode == "HIDE")
     {
-        if (argc < 5 || argc > 6)
+        if (argc < 6 || argc > 7)
         {
             print_usage();
             return 1;
