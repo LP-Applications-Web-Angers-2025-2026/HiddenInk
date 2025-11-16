@@ -21,9 +21,21 @@ int hide(int argc, char* argv[]) {
     string inputPath = argv[2];
     string fileToHide = argv[3];
     string outputPath = argv[4];
-    string key = argv[5];
-    int bitPos = bit_position(argc, argv, 5);
+    string encrypt = argv[5];
+    string key = "";
+    int bitPos = bit_position(argc, argv, 6);
     if (bitPos == -1) return 1;
+
+    if (encrypt == "o") {
+        key = generate_key(16);  
+        cout << "Clé générée (à conserver pour l'extraction) : " << key << endl;
+    } else if (encrypt == "n") {
+        key = "";
+    } else {
+        cout << "Erreur, l'argument encrypt doit être 'o' ou 'n'." << endl;
+        return 1;
+    }
+
 
     if (!validate_file_exists(fileToHide)) {
         cout << "Erreur, le fichier à cacher n'existe pas." << endl;
@@ -55,23 +67,44 @@ int hide(int argc, char* argv[]) {
  *       - Les balises de début/fin sont invalides/corrompues
  */
 int extract(int argc, char* argv[]) {
-    string inputPath = argv[2];
-    string keyHex = argv[3];
-    int bitPos = bit_position(argc, argv, 4);
-    if (bitPos == -1) return 1;
 
-    // Récupérer le message dans le bit spécifié avec déchiffrement
+    string inputPath = argv[2];
+    string keyHex = "";
+    if (argc >= 4) {
+        // Si le 3e argument n’est PAS un nombre entre 1 et 8 → c’est une clé
+        string arg = argv[3];
+        bool isBit = (arg.size() == 1 && arg[0] >= '1' && arg[0] <= '8');
+
+        if (!isBit)
+            keyHex = arg;
+    }
+
+    // Recherche du bit (si fourni)
+    int bitPos;
+    if (keyHex == "") {
+        // Si pas de clé → bit = argv[3] (ou défaut)
+        bitPos = bit_position(argc, argv, 3);
+    } else {
+        // Si clé → bit = argv[4] (ou défaut)
+        bitPos = bit_position(argc, argv, 4);
+    }
+
+    if (bitPos == -1)
+        return 1;
+
+    // Extraction
     string messageDecode = bmpRecup(inputPath, bitPos, keyHex);
 
     if (messageDecode == "1") {
-        cout << "Erreur, le processus de récuperation du message dissimulé n'as pas réussit." << endl;
+        cout << "Erreur : la récupération du message a échoué." << endl;
     } else if (messageDecode == "2") {
-        cout << "Information, ce fichier ne possède pas de message dissimuler." << endl;
+        cout << "Aucun message trouvé." << endl;
     } else if (messageDecode == "3") {
-        cout << "Erreur, pas de balise correcte. message modifié ou inexistant." << endl;
+        cout << "Balise incorrecte ou message corrompu." << endl;
     } else {
         cout << messageDecode << endl;
     }
+
     return 0;
 }
 
@@ -123,7 +156,7 @@ bool validate_file_exists(const std::string& path) {
  * lors de l'exécution du programme, incluant les modes "HIDE", "EXTRACT", "HISTO", et "INTERACT".
  */
 void print_usage() {
-    cerr << "Usage: " << " HIDE <input_bmp> <file_to_hide> <output_bmp> [bit_position]" << endl;
+    cerr << "Usage: " << " HIDE <input_bmp> <file_to_hide> <output_bmp> <encrypt> [bit_position]" << endl;
     cerr << "       " << " EXTRACT <input_bmp> <key> [bit_position]" << endl;
     cerr << "       " << " HISTO <input_bmp>" << endl;
     cerr << "       " << " INTERACT" << endl;

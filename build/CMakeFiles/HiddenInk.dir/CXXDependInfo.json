@@ -1,0 +1,82 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "GNU",
+	"compiler-id" : "GNU",
+	"compiler-simulate-id" : "",
+	"config" : "$BuildType",
+	"cxx-modules" : {},
+	"database-info" : null,
+	"dir-cur-bld" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/build",
+	"dir-cur-src" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge",
+	"dir-top-bld" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/build",
+	"dir-top-src" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : [],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/build/CMakeFiles/HiddenInk.dir",
+	"sources" : 
+	{
+		"CMakeFiles/HiddenInk.dir/interfaces/cli/interactif/fonction_menu_interactif.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/interfaces/cli/interactif/fonction_menu_interactif.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/interfaces/cli/non_interactif/fonctions_main.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/interfaces/cli/non_interactif/fonctions_main.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/main.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/main.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/BMP/bmp_Recuperation.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/BMP/bmp_Recuperation.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/BMP/bmp_convert.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/BMP/bmp_convert.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/PNG/png_extract.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/PNG/png_extract.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/PNG/png_hide_image.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/PNG/png_hide_image.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/PNG/png_hide_text.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/PNG/png_hide_text.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/utils/encrypt/encrypt.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/utils/encrypt/encrypt.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/utils/external/stb_impl.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/utils/external/stb_impl.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/utils/histogramme/histogram.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/utils/histogramme/histogram.cpp"
+		},
+		"CMakeFiles/HiddenInk.dir/stenographie/utils/utils_bin.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/LuCti/Downloads/HiddenInk-purge/HiddenInk-purge/stenographie/utils/utils_bin.cpp"
+		}
+	}
+}
