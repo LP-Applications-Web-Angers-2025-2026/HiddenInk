@@ -95,13 +95,13 @@ void saveKeyFile(const string& outputPath, const string& key)
             string fileName = (pos != string::npos)
                                   ? outputPath.substr(lastSlash + 1, pos - lastSlash - 1)
                                   : outputPath.substr(lastSlash + 1);
-            keyFilePath = dirPath + fileName + ".hiddenink";
+            keyFilePath = dirPath + "/cle/" + fileName + ".hiddenink";
         }
         else
         {
             // No directory path, just filename
             string fileName = (pos != string::npos) ? outputPath.substr(0, pos) : outputPath;
-            keyFilePath = fileName + ".hiddenink";
+            keyFilePath = "cle/" + fileName + ".hiddenink";
         }
 
         ofstream keyFile(keyFilePath);

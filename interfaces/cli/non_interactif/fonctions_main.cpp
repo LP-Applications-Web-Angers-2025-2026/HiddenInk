@@ -157,7 +157,7 @@ bool validate_file_exists(const std::string& path) {
  */
 void print_usage() {
     cerr << "Usage: " << " HIDE <input_bmp> <file_to_hide> <output_bmp> <encrypt> [bit_position]" << endl;
-    cerr << "       " << " EXTRACT <input_bmp> <key> [bit_position]" << endl;
+    cerr << "       " << " EXTRACT <input_bmp> [key] [bit_position]" << endl;
     cerr << "       " << " HISTO <input_bmp>" << endl;
     cerr << "       " << " INTERACT" << endl;
 }

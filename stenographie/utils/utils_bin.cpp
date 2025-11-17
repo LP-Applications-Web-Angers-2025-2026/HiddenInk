@@ -5,6 +5,7 @@
 #include <fstream>
 #include <bitset>
 #include <vector>
+#include "encrypt/encrypt.h"
 
 using namespace std;
 
@@ -167,6 +168,68 @@ bool supportedFile(const string& filePath)
 
     // vérifier que l'extension est supporté
     return find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end();
+}
+
+/**
+ * Lit le contenu d'un fichier, le chiffre avec une clé XOR, et retourne la représentation binaire
+ * @param filetohide Chemin du fichier à lire et chiffrer
+ * @param key Clé de chiffrement XOR
+ * @return La chaîne de bits représentant le fichier chiffré (8 bits par caractère)
+ */
+string lireFichierKey(string filetohide, string key) {
+    ifstream file(filetohide, ios::binary);
+    if (!file) {
+        cerr << "Erreur : impossible d'ouvrir " << filetohide << endl;
+        return "";
+    }
+    string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+    file.close();
+
+    string encrypted = xor_encrypt(content, key);
+    return BinForString(encrypted);
+}
+
+/**
+ * Nettoie le chemin en supprimant les guillemets et espaces inutiles
+ * @param s Le chemin à nettoyer
+ * @return Le chemin nettoyé
+ */
+string cleanPath(string s) {
+    // Supprimer les guillemets au début et à la fin
+    if (!s.empty() && s.front() == '"') s.erase(0, 1);
+    if (!s.empty() && s.back() == '"') s.pop_back();
+    // Supprimer les espaces au début et à la fin
+    size_t start = s.find_first_not_of(" \t");
+    if (start == string::npos) return "";
+    size_t end = s.find_last_not_of(" \t");
+    return s.substr(start, end - start + 1);
+}
+
+/**
+ * Vérifie si le fichier existe et peut être ouvert
+ * @param fichier Chemin du fichier à vérifier
+ * @return True si le fichier existe et est accessible, false sinon
+ */
+bool VerifFichier(string fichier) {
+    ifstream file(fichier);
+    if (file.good()) {
+        file.close();
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Vérifie si le message binaire peut tenir dans l'image
+ * @param messageBinaire Le message en binaire
+ * @param data Les données de l'image
+ * @param headerSize Taille de l'en-tête de l'image
+ * @return True si le message peut être inséré, false sinon
+ */
+bool messageCanFitInImage(const string& messageBinaire, const vector<unsigned char>& data, size_t headerSize) {
+    size_t availableBits = (data.size() - headerSize) * 8; // Chaque octet peut stocker 1 bit LSB
+    size_t messageBits = messageBinaire.size();
+    return messageBits <= availableBits;
 }
 
 void afficherAide()

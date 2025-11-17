@@ -93,7 +93,6 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
     else
     {
         messageBinaire = cipher;
-        cout << messageBinaire << endl;
     }
     //--- FIN DECHIFFREMENT DU MESSAGE ---
 
@@ -115,7 +114,7 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
     }
 
     // --- Sauvegarde du contenu extrait ---
-    const string outputPath = "./fichier_extrait" + extension;
+    const string outputPath = "./out/fichiersExtraits/fichier_extrait" + extension;
     ofstream outFile(outputPath, ios::binary);
     if (!outFile)
     {
