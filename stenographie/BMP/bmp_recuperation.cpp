@@ -1,4 +1,4 @@
-#include "bmp_Recuperation.h"
+#include "bmp_recuperation.h"
 #include "../utils/utils_bin.h"
 #include "../utils/encrypt/encrypt.h"
 

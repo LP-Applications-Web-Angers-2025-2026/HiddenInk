@@ -1,10 +1,11 @@
+
 #include "fonctions_main.h"
 #include <filesystem>
 #include <iostream>
 #include <ostream>
 #include <string>
 #include "../../../stenographie/BMP/bmp_convert.h"
-#include "../../../stenographie/BMP/bmp_Recuperation.h"
+#include "../../../stenographie/BMP/bmp_recuperation.h"
 #include "../../../stenographie/utils/stegano/stegano_text.hpp"
 #include "../interactif/fonction_menu_interactif.h"
 
@@ -27,7 +28,7 @@ int hide(int argc, char* argv[]) {
     if (bitPos == -1) return 1;
 
     if (encrypt == "o") {
-        key = generate_key(16);  
+        key = generate_key(16);
         cout << "Clé générée (à conserver pour l'extraction) : " << key << endl;
     } else if (encrypt == "n") {
         key = "";
@@ -49,17 +50,17 @@ int hide(int argc, char* argv[]) {
 
 /**
  * Extrait un message caché d'une image BMP en utilisant la stéganographie.
- * 
+ *
  * @param argc Nombre d'arguments de la ligne de commande
  * @param argv Tableau des arguments de la ligne de commande contenant:
  *            - argv[2]: Chemin vers l'image BMP source
  *            - argv[3]: Clé de déchiffrement en format hexadécimal
  *            - argv[4]: (Optionnel) Position du bit de dissimulation (1-8, défaut=1)
- * 
+ *
  * @return Code de retour :
  *         - 0 : Extraction réussie
  *         - 1 : Erreur lors de l'extraction
- * 
+ *
  * @note Le message extrait est affiché sur la sortie standard.
  *       Des messages d'erreur spécifiques sont affichés si :
  *       - Le processus d'extraction échoue
@@ -166,7 +167,7 @@ void print_usage() {
  * Lance le mode interactif permettant de choisir les différentes opérations de stéganographie disponibles.
  * Affiche un menu avec 4 options :
  * 1. Cacher un texte dans une image
- * 2. Cacher une image dans une image 
+ * 2. Cacher une image dans une image
  * 3. Extraire des données
  * 4. Analyser une image
  * @return 0 si succès, 1 si erreur lors de la saisie utilisateur
@@ -191,4 +192,3 @@ int runInteractiveMode()
 
     return fonction_menu(choix);
 }
-

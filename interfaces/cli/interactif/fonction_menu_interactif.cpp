@@ -4,7 +4,7 @@
 #include "../../../stenographie/PNG/png_extract.h"
 #include "../../../stenographie/utils/analysis/image_analysis.hpp"
 #include "../../../stenographie/BMP/bmp_convert.h"
-#include "../../../stenographie/BMP/bmp_Recuperation.h"
+#include "../../../stenographie/BMP/bmp_recuperation.h"
 #include "../../../stenographie/utils/utils_bin.h"
 #include "../../../stenographie/utils/encrypt/encrypt.h"
 #include <cstdlib>
