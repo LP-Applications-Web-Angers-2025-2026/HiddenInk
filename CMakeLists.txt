@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(HiddenInk main.cpp
         stenographie/BMP/bmp_convert.cpp
-        stenographie/BMP/bmp_Recuperation.cpp
-        stenographie/BMP/bmp_Recuperation.h
         stenographie/utils/utils_bin.cpp
         stenographie/utils/utils_bin.h
         stenographie/utils/external/stb_impl.cpp
@@ -29,7 +27,10 @@ add_executable(HiddenInk main.cpp
         interfaces/cli/interactif/fonction_menu_interactif.cpp
         interfaces/cli/interactif/fonction_menu_interactif.cpp
         interfaces/cli/interactif/fonction_menu_interactif.h
-        interfaces/cli/interactif/fonction_menu_interactif.cpp)
+        interfaces/cli/interactif/fonction_menu_interactif.cpp
+        stenographie/BMP/bmp_convert.cpp
+        stenographie/BMP/bmp_recuperation.cpp
+        stenographie/BMP/bmp_convert.cpp)
 
 if (MINGW)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
