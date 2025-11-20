@@ -122,33 +122,20 @@ static int menuCacherTexte()
     // la fonction vérifie que le fichier soit existant, accessible et supporté.
     while (true)
     {
-        cout << "\nFichier texte à cacher (.txt) : " << endl;
+        cout << "\nFichier texte à cacher (.txt) ou texte direct : " << endl;
         getline(cin, message);
         message = cleanPath(message);
 
         if (VerifFichier(message))
         {
-            // OK : le fichier existe
+            // Si c'est un fichier
+            string fichierMessage = message;
             break;
         }
-        // Le fichier n'existe pas → on crée un fichier et on y stocke le texte
-        string outputName = "message_saisi.txt";
+        // Si ce n'est pas un fichier
+        string texteMessage = message;
 
-        ofstream out(outputName);
-        if (!out)
-        {
-            cerr << "Erreur : impossible de creer le fichier." << endl;
-            continue;
-        }
-
-        out << message;
-        out.close();
-
-        cout << "Le texte saisi n'est pas un fichier. Il a ete enregistre dans : "
-            << outputName << endl;
-
-        // On utilise ce fichier nouvellement créé
-        message = outputName;
+        cout << "Texte detecte. Aucun fichier n'a ete cree." << endl;
         break;
     }
 
@@ -357,13 +344,6 @@ static int menuExtraire()
 
             string result = bmpRecup(inputPath, 0, key); // bitPos = 0 par défaut
             cout << result << "\n";
-
-            // Le message est affiché par bmpRecup(), et le fichier est créé
-            // On ne fait qu'afficher un message de confirmation pour la sauvegarde
-            if (!outputPath.empty())
-            {
-                cout << "💾 Message sauvegardé dans : " << outputPath << "\n";
-            }
         }
         else
         {

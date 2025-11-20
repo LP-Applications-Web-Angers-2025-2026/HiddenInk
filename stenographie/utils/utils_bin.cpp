@@ -284,22 +284,32 @@ bool ouvrirfichierMessage(string fileToHide)
  * - Vérifie si l'extension du fichier est supportée (.txt, .bmp, .png)
  * - Vérifie si le fichier existe et peut être ouvert
  */
+#include <filesystem>
+using namespace std;
+namespace fs = std::filesystem;
+
 bool VerifFichier(string fichier)
 {
+    // Si le fichier n'existe pas, on considère que ce n'est PAS un fichier
+    if (!fs::exists(fichier) || !fs::is_regular_file(fichier)) {
+        return false;   // silencieux : aucune erreur affichée !
+    }
+
     bool reussite = true;
 
-    // Vérification du format du fichier à cacher
-    if (!supportedFile(fichier))
-    {
+    if (!supportedFile(fichier)) {
         cout << "[HiddenInk] Erreur : Le format du fichier n'est pas supporté." << endl;
         reussite = false;
     }
 
-    // Vérification de l'ouverture du fichier source
-    if (!ouvrirfichierMessage(fichier)) reussite = false;
+    if (!ouvrirfichierMessage(fichier)) {
+        cout << "[HiddenInk] Erreur : le fichier image ne s'ouvre pas !" << endl;
+        reussite = false;
+    }
 
     return reussite;
 }
+
 
 /**
  * @brief Nettoie une chaîne représentant un chemin ou un lien.
