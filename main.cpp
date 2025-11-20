@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     }
     else if (mode == "EXTRACT")
     {
-        if (argc < 4 || argc > 5)
+        if (argc < 3 || argc > 5)
         {
             print_usage();
             return 1;
