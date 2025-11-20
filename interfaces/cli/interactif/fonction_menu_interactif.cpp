@@ -340,10 +340,7 @@ static int menuExtraire()
             cout << "Clé (hex) utilisée lors du cachage : ";
             getline(cin, key);
             key = cleanPath(key);
-
-
             string result = bmpRecup(inputPath, 0, key); // bitPos = 0 par défaut
-            cout << result << "\n";
         }
         else
         {
@@ -390,7 +387,6 @@ static int menuExtraire()
             key = cleanPath(key);
 
             string result = bmpRecup(inputPath, 0, key); // bitPos = 0 par défaut
-            cout << result << "\n";
         }
         else
         {
