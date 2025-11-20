@@ -103,7 +103,7 @@ void processHistogram(const string& inputPath) {
     // Générer et sauvegarder l'image graphique dans out/
     filesystem::path inputPathObj(inputPath); // chemin d'entrée
     string baseName = inputPathObj.stem().string();
-    string outputDir = "out/"; // chemin de sortie
+    string outputDir = "./"; // chemin de sortie
     filesystem::create_directories(outputDir);
     string outputPath = outputDir + baseName + "_histogram.bmp"; // chemin de sortie avec fichier
     saveHistogramBMP(histo, outputPath);
