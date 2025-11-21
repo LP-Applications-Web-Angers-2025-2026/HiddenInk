@@ -7,4 +7,5 @@
 int hidePNGImage(const std::string& carrierPath, const std::string& secretPath, 
                  const std::string& outputPath, int bitsPerChannel = 0);
 
+
 #endif // PNG_HIDE_IMAGE_H

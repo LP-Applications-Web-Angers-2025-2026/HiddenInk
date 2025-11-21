@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <ostream>
-#include "fonctions_main/fonctions_main.h"
+#include "interfaces/cli/non_interactif/fonction_menu_non_interactif.h"
 
 using namespace std;
 
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     }
     else if (mode == "HIDE")
     {
-        if (argc < 5 || argc > 6)
+        if (argc < 6 || argc > 7)
         {
             print_usage();
             return 1;
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     }
     else if (mode == "EXTRACT")
     {
-        if (argc < 4 || argc > 5)
+        if (argc < 3 || argc > 5)
         {
             print_usage();
             return 1;

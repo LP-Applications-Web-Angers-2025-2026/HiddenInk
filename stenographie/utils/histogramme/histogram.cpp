@@ -53,9 +53,10 @@ void saveHistogramBMP(const vector<int>& histo, const string& filename, int widt
         int barHeight = static_cast<int>((double)histo[i] / maxVal * (height - 10));
         for (int y = 0; y < barHeight; ++y) {
             for (int x = 0; x < barWidth - 1; ++x) {
-                int px = i * barWidth + x;
+                /*int px = i * barWidth + x;
                 int py = height - 1 - y;
-                int idx = (py * width + px) * 3;
+                int idx = (py * width + px) * 3; //ou */
+                int idx = ((height - 1 - y) * width + (i * barWidth + x)) * 3;
                 img[idx + 0] = 0;   // Bleu
                 img[idx + 1] = 0;   // Vert
                 img[idx + 2] = 255; // Rouge (donc bleu vif)
@@ -100,10 +101,10 @@ void processHistogram(const string& inputPath) {
     printHistogram(histo);
 
     // Générer et sauvegarder l'image graphique dans out/
-    filesystem::path inputPathObj(inputPath);
+    filesystem::path inputPathObj(inputPath); // chemin d'entrée
     string baseName = inputPathObj.stem().string();
-    string outputDir = "out/";
+    string outputDir = "./"; // chemin de sortie
     filesystem::create_directories(outputDir);
-    string outputPath = outputDir + baseName + "_histogram.bmp";
+    string outputPath = outputDir + baseName + "_histogram.bmp"; // chemin de sortie avec fichier
     saveHistogramBMP(histo, outputPath);
 }

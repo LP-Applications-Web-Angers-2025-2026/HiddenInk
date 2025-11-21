@@ -7,4 +7,5 @@
 int hidePNGText(const std::string& carrierPath, const std::string& textOrFilePath, 
                 const std::string& outputPath, int bitsPerChannel = 0);
 
+
 #endif // PNG_HIDE_TEXT_H

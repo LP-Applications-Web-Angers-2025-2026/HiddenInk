@@ -5,6 +5,8 @@
 #include <fstream>
 #include <bitset>
 #include <vector>
+#include "../utils/encrypt/encrypt.h"
+
 
 using namespace std;
 
@@ -16,7 +18,7 @@ using namespace std;
 string BinForLetter(char letter) {return bitset<8>(static_cast<unsigned char>(letter)).to_string();}
 
 /**
- * Converti une chaîne de caractères en une chaîne de bits 
+ * Converti une chaîne de caractères en une chaîne de bits
  * @param message La chaîne de caractères à convertir
  * @return La chaîne de bits représentant le message (8 bits par caractère)
  */
@@ -48,7 +50,21 @@ string BinForFile(const string& filePath) {
 }
 
 /**
- * Convertit une chaîne de bits en texte ASCII 
+ * Convertit un vecteur d'octets en chaîne binaire
+ * @param data Le vecteur d'octets à convertir
+ * @return La chaîne binaire correspondante (8 bits par octet)
+ */
+string BinForBytes(const vector<unsigned char>& data)
+{
+    string bits;
+    bits.reserve(data.size() * 8);
+    for (unsigned char c : data)
+        bits += bitset<8>(c).to_string();
+    return bits;
+}
+
+/**
+ * Convertit une chaîne de bits en texte ASCII
  * @param binaire La chaîne de bits à convertir
  * @return Le texte ASCII correspondant aux bits
  */
@@ -87,8 +103,6 @@ size_t getSignatureSize() {
  * @return La signature en binaire sur 8 bits par caractère
  */
 string getSignatureBinary() {
-    string signatureBinaire;
-
     // Pour chaque caractère de la signature, on ajoute sa représentation binaire sur 8 bits
     return BinForString(getSignature());
 }
@@ -104,7 +118,7 @@ size_t getSignatureBinarySize() {
 
 /**
  * Retourne la balise d'ouverture ou de fermeture selon le booléen passé en paramètre
- * @param ouverture True pour la balise ouvrante, false pour la balise fermante 
+ * @param ouverture True pour la balise ouvrante, false pour la balise fermante
  * @return La balise sous forme de chaîne de caractères
  */
 string getBalise(bool ouverture) {
@@ -132,7 +146,6 @@ size_t getBaliseSize() {
  * @return La balise en binaire sur 8 bits par caractère
  */
 string getBaliseBinary(bool ouverture) {
-    string baliseBinaire;
     bool boolBalise;
 
     // on vérifie si la balise à coder et la balise ouvrante ou fermemante
@@ -152,7 +165,7 @@ size_t getBaliseBinarySize() {
 }
 
 /**
- * Vérifie si le fichier a une extension supportée
+ * Vérifie si le fichier a une extension supportée (.txt, .bmp ou .png)
  * @param filePath Le chemin du fichier à vérifier
  * @return True si l'extension est supportée, false sinon
  */
@@ -176,11 +189,171 @@ bool supportedFile(const string& filePath)
     return find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end();
 }
 
+/**
+ * Lit le contenu d'un fichier et le convertit éventuellement en binaire chiffré
+ * @param fileToHide Chemin du fichier à lire
+ * @param chiffrer Indique si le contenu doit être chiffré avant la conversion en binaire
+ * @return Le contenu du fichier converti en binaire (et chiffré si demandé)
+ */
+string lireFichierKey(string fileToHide, string key)
+{
+    string cipher;
+    // Lire le contenu du fichier en tant que string (clair)
+    ifstream fileToHideStream(fileToHide, ios::binary);
+    if (!fileToHideStream)
+    {
+        cout << "[HiddenInk] Erreur : impossible de lire le fichier à cacher." << endl;
+        return "ERROR";
+    }
+
+    string plainContent((istreambuf_iterator<char>(fileToHideStream)), istreambuf_iterator<char>());
+    fileToHideStream.close();
+
+    if (!key.empty())
+    {
+        // Chiffrer le contenu en clair avec la clé fournie
+        cipher = xor_encrypt(plainContent, key);
+        plainContent = cipher; // à améliorer
+    }
+
+    // Convertir le contenu chiffré en binaire
+    return BinForString(plainContent);
+}
+
+/**
+ * Vérifie si le message peut être inséré dans l'image
+ * @param messageBinaire Le message à cacher en binaire
+ * @param data Les données de l'image
+ * @param headerSize La taille de l'en-tête de l'image
+ * @return true si le message peut être inséré, false sinon
+ */
+bool messageCanFitInImage(const string& messageBinaire, const vector<unsigned char>& data, size_t headerSize)
+{
+    if (messageBinaire.size() > data.size() - headerSize)
+    {
+        cerr << "[HiddenInk] Erreur : le message est trop grand pour être caché dans cette image !" << endl;
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Vérifie qu'un fichier source existe et peut être ouvert
+ * @param inputPath Chemin du fichier à vérifier
+ * @return true si le fichier est accessible, false sinon
+ */
+bool ouvrirfichierSource(string inputPath)
+{
+    ifstream file(inputPath, std::ios::binary);
+    if (!file.is_open())
+    {
+        cout << "[HiddenInk] Erreur : le fichier image ne s'ouvre pas !" << inputPath << std::endl;
+        // Femeture du fichier
+        return false;
+    }
+    // Femeture du fichier
+    file.close();
+    return true;
+}
+
+/**
+ * Vérifie si un fichier à cacher existe et peut être ouvert
+ * @param fileToHide Chemin du fichier à vérifier
+ * @return true si le fichier est accessible, false sinon
+ */
+bool ouvrirfichierMessage(string fileToHide)
+{
+    ifstream file(fileToHide, ios::binary);
+    if (!file.is_open())
+    {
+        cout << "[HiddenInk] Erreur : le fichier image ne s'ouvre pas !" << fileToHide << endl;
+        return false; // Femeture du fichier
+    }
+    // Femeture du fichier
+    file.close();
+    return true;
+}
+
+/**
+ * Vérifie si un fichier est valide pour le traitement en stéganographie
+ *
+ * @param fichier Le chemin du fichier à vérifier
+ * @return false si le fichier est valide, true s'il y a une erreur
+ *
+ * Cette fonction effectue deux vérifications :
+ * - Vérifie si l'extension du fichier est supportée (.txt, .bmp, .png)
+ * - Vérifie si le fichier existe et peut être ouvert
+ */
+#include <filesystem>
+using namespace std;
+namespace fs = std::filesystem;
+
+bool VerifFichier(string fichier)
+{
+    // Si le fichier n'existe pas, on considère que ce n'est PAS un fichier
+    if (!fs::exists(fichier) || !fs::is_regular_file(fichier)) {
+        return false;   // silencieux : aucune erreur affichée !
+    }
+
+    bool reussite = true;
+
+    if (!supportedFile(fichier)) {
+        cout << "[HiddenInk] Erreur : Le format du fichier n'est pas supporté." << endl;
+        reussite = false;
+    }
+
+    if (!ouvrirfichierMessage(fichier)) {
+        cout << "[HiddenInk] Erreur : le fichier image ne s'ouvre pas !" << endl;
+        reussite = false;
+    }
+
+    return reussite;
+}
+
+
+/**
+ * @brief Nettoie une chaîne représentant un chemin ou un lien.
+ *
+ * Cette fonction supprime :
+ * - les espaces au début et à la fin de la chaîne ;
+ * - une paire de guillemets ou d'apostrophes entourant complètement la chaîne.
+ *
+ * Elle permet ainsi d'accepter des chemins ou URLs saisis entre guillemets,
+ * apostrophes ou contenant des espaces superflus.
+ *
+ * @param s La chaîne brute entrée par l'utilisateur.
+ * @return La chaîne nettoyée, sans guillemets ni espaces inutiles.
+ */
+string cleanPath(string s)
+{
+    // Supprimer espaces au début et à la fin
+    while (!s.empty() && isspace(s.front())) s.erase(s.begin());
+    while (!s.empty() && isspace(s.back())) s.pop_back();
+
+    // Si la chaîne commence et finit par le même guillemet, les retirer
+    if (s.size() >= 2 &&
+        ((s.front() == '"' && s.back() == '"') ||
+            (s.front() == '\'' && s.back() == '\'')))
+    {
+        s = s.substr(1, s.size() - 2);
+    }
+
+    return s;
+}
+
+/**
+ * Affiche les instructions d'utilisation et les options disponibles pour le programme de stéganographie avancée.
+ *
+ * Cette méthode présente sous forme détaillée les différents modes de fonctionnement du programme,
+ * les commandes associées, ainsi que des exemples d'utilisation. Elle décrit les options pour
+ * cacher ou extraire des images et du texte, comparer des images, analyser des histogrammes et
+ * détecter la présence de stéganographie.
+ */
 void afficherAide()
 {
     std::cout << "=== STEGANOGRAPHIE AVANCEE ===\n\n";
     std::cout << "Usage:\n";
-    std::cout << "  Mode interactif : ./main\n";
+    std::cout << "  Mode interactif : ./main interact\n";
     std::cout << "  Mode démonstration : ./main demo\n\n";
     std::cout << "  Cacher une image : ./main hide-image <image_porteuse> <image_secrete> <sortie.png>\n";
     std::cout << "  Extraire une image : ./main extract-image <image_avec_secret> <sortie.png>\n\n";
@@ -199,4 +372,3 @@ void afficherAide()
     std::cout << "Note: Le nombre de bits par canal est détecté automatiquement.\n";
     std::cout << "      Pour extract-text, le fichier .txt est optionnel (affichage uniquement si omis).\n";
 }
-

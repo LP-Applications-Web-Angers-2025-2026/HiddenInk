@@ -6,6 +6,16 @@
 
 using namespace std;
 
+/**
+ * Extrait un message texte caché dans une image PNG en utilisant la stéganographie.
+ * 
+ * Cette fonction charge une image PNG, en extrait un message texte caché dans les LSB (bits de poids faible)
+ * des pixels, et sauvegarde ou affiche le résultat selon les paramètres fournis.
+ *
+ * @param inputPath Le chemin du fichier PNG source contenant le message caché
+ * @param outputPath Le chemin où sauvegarder le message extrait (si vide, affiche sur la console)
+ * @return EXIT_SUCCESS (0) si l'opération réussit, EXIT_FAILURE (1) en cas d'erreur
+ */
 int extractPNGText(const string& inputPath, const string& outputPath)
 {
     int w, h, c;
@@ -56,6 +66,16 @@ int extractPNGText(const string& inputPath, const string& outputPath)
     return EXIT_SUCCESS;
 }
 
+/**
+ * Extrait une image cachée dans une image PNG en utilisant la stéganographie.
+ * 
+ * Cette fonction charge une image PNG, en extrait une image cachée dans les LSB (bits de poids faible)
+ * des pixels, et sauvegarde l'image extraite dans un fichier.
+ *
+ * @param inputPath Le chemin du fichier PNG source contenant l'image cachée
+ * @param outputPath Le chemin où sauvegarder l'image extraite
+ * @return EXIT_SUCCESS (0) si l'opération réussit, EXIT_FAILURE (1) en cas d'erreur
+ */
 int extractPNGImage(const string& inputPath, const string& outputPath)
 {
     int w, h, c;
