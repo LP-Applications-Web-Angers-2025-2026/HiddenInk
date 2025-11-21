@@ -1,91 +1,95 @@
 #include "bmp_hide.h"
 #include "../utils/utils_bin.h"
-#include <iostream>
-#include <fstream>
-#include <vector>
 #include <bitset>
 #include <cctype>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <pstl/parallel_backend_utils.h>
+#include <vector>
 
 #include "../utils/encrypt/encrypt.h"
 using namespace std;
 
-void bmpHide(string inputPath, string fileToHide, string outputPath, int bitPos, string key)
-{
-    string binFile, messageBinaire, signatureBinaire;
+void bmpHide(string inputPath, string fileToHide, string outputPath, int bitPos,
+             string key) {
+  string binFile, messageBinaire, signatureBinaire;
+  string byteKey = "";
 
-    unsigned char mask;
-    // Vérification des variables
-    ifstream file(inputPath, std::ios::binary);
-    if (!file)
-    {
-        cerr << "Erreur : impossible d'ouvrir " << inputPath << std::endl;
-        return;
+  // Convertir la clé hex en bytes si fournie
+  if (!key.empty()) {
+    byteKey = hex_to_key(key);
+  }
+
+  unsigned char mask;
+  // Vérification des variables
+  ifstream file(inputPath, std::ios::binary);
+  if (!file) {
+    cerr << "Erreur : impossible d'ouvrir " << inputPath << std::endl;
+    return;
+  }
+  // Essayer d’ouvrir fileToHide comme un fichier
+  // Vérifier si fileToHide est un fichier existant
+  if (std::filesystem::exists(fileToHide) &&
+      std::filesystem::is_regular_file(fileToHide)) {
+    // C'est un fichier -> utiliser lireFichierKey qui gère la lecture et le
+    // chiffrement
+    binFile = lireFichierKey(fileToHide, byteKey);
+  } else {
+    // Ce n'est PAS un fichier -> utiliser comme message brut
+    string plainContent = fileToHide;
+    if (!byteKey.empty()) {
+      // Chiffrer le message brut si une clé est fournie
+      plainContent = xor_encrypt(plainContent, byteKey);
     }
-    // Essayer d’ouvrir fileToHide comme un fichier
-    ifstream fileToHideStream(fileToHide, ios::binary);
+    binFile = BinForString(plainContent);
+  }
 
-    string plainContent;
-    if (fileToHideStream) {
-        // fileToHide est un fichier -> lire contenu
-        plainContent.assign((istreambuf_iterator<char>(fileToHideStream)),
-                             istreambuf_iterator<char>());
-        fileToHideStream.close();
-    } else {
-        // ce n'est PAS un fichier -> utiliser comme message directement
-        plainContent = fileToHide;
+  // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une
+  // seule instruction.
+  vector<unsigned char> data((std::istreambuf_iterator<char>(file)),
+                             std::istreambuf_iterator<char>());
+  // Femeture du fichier
+  file.close();
+
+  // Taille du header & de la signature
+  size_t headerSize = 54; // par défaut
+  if (data.size() >= 30) {
+    unsigned short bitsPerPixel =
+        data[28] | (data[29] << 8); // lire depuis l'image BMP
+    if (bitsPerPixel == 8) {
+      headerSize += 256 * 4; // ajouter la palette
     }
+  }
 
-    // IMPORTANT : envoyer le contenu à lireFichierKey, pas le nom du fichier
-    binFile = lireFichierKey(plainContent, key);
+  // Convertit et stock le message en binaire dans messageBinaire
+  messageBinaire += getSignatureBinary();
+  messageBinaire += getBaliseBinary(true);
+  messageBinaire += binFile;
+  messageBinaire += getBaliseBinary(false);
 
-    // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
-    vector<unsigned char> data((std::istreambuf_iterator<char>(file)),
-                               std::istreambuf_iterator<char>());
-    // Femeture du fichier
-    file.close();
+  // Vérification que le message avec la signature et les balises peut être
+  // inséré dans l'image
+  if (!messageCanFitInImage(messageBinaire, data, headerSize)) {
+    return;
+  }
 
-    // Taille du header & de la signature
-    size_t headerSize = 54; // par défaut
-    if (data.size() >= 30)
-    {
-        unsigned short bitsPerPixel = data[28] | (data[29] << 8); // lire depuis l'image BMP
-        if (bitsPerPixel == 8)
-        {
-            headerSize += 256 * 4; // ajouter la palette
-        }
-    }
+  // Change le bit spécifié de chaque octet de l'image par chaque bit du message
+  vector<unsigned char> modifiedData = data;
+  mask = ~(1 << bitPos); // Masque pour effacer le bit
+  for (size_t i = 0; i < messageBinaire.size(); ++i) {
+    modifiedData[headerSize + i] &= mask;
+    modifiedData[headerSize + i] |= ((messageBinaire[i] - '0') << bitPos);
+  }
 
-    // Convertit et stock le message en binaire dans messageBinaire
-    messageBinaire += getSignatureBinary();
-    messageBinaire += getBaliseBinary(true);
-    messageBinaire += binFile;
-    messageBinaire += getBaliseBinary(false);
+  // Sauvegarder l'image modifiée
+  ofstream outFile(outputPath, ios::binary);
+  outFile.write(reinterpret_cast<char *>(modifiedData.data()),
+                modifiedData.size());
+  outFile.close();
 
-    // Vérification que le message avec la signature et les balises peut être inséré dans l'image
-    if (!messageCanFitInImage(messageBinaire, data, headerSize))
-    {
-        return;
-    }
+  // Sauvegarder la clé
+  saveKeyFile(outputPath, key);
 
-    // Change le bit spécifié de chaque octet de l'image par chaque bit du message
-    vector<unsigned char> modifiedData = data;
-    mask = ~(1 << bitPos); // Masque pour effacer le bit
-    for (size_t i = 0; i < messageBinaire.size(); ++i)
-    {
-        modifiedData[headerSize + i] &= mask;
-        modifiedData[headerSize + i] |= ((messageBinaire[i] - '0') << bitPos);
-    }
-
-    // Sauvegarder l'image modifiée
-    ofstream outFile(outputPath, ios::binary);
-    outFile.write(reinterpret_cast<char*>(modifiedData.data()), modifiedData.size());
-    outFile.close();
-
-    // Sauvegarder la clé
-    saveKeyFile(outputPath, key);
-
-
-    cout << "[HiddenInk] Votre fichier a bien été caché" << endl;
+  cout << "[HiddenInk] Votre fichier a bien été caché" << endl;
 }
