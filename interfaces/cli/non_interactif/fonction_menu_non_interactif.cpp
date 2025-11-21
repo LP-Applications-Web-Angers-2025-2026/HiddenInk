@@ -1,11 +1,11 @@
 
-#include "fonctions_main.h"
+#include "fonction_menu_non_interactif.h"
 #include <filesystem>
 #include <iostream>
 #include <ostream>
 #include <string>
-#include "../../../stenographie/BMP/bmp_convert.h"
-#include "../../../stenographie/BMP/bmp_recuperation.h"
+#include "../../../stenographie/BMP/bmp_hide.h"
+#include "../../../stenographie/BMP/bmp_extract.h"
 #include "../../../stenographie/utils/stegano/stegano_text.hpp"
 #include "../interactif/fonction_menu_interactif.h"
 
@@ -44,7 +44,7 @@ int hide(int argc, char* argv[]) {
     }
 
     // Cacher le message dans le bit spécifié
-    bmpConvert(inputPath, fileToHide, outputPath, bitPos, key);
+    bmpHide(inputPath, fileToHide, outputPath, bitPos, key);
     return 0;
 }
 
@@ -94,7 +94,7 @@ int extract(int argc, char* argv[]) {
         return 1;
 
     // Extraction
-    string messageDecode = bmpRecup(inputPath, bitPos, keyHex);
+    string messageDecode = bmpExtract(inputPath, bitPos, keyHex);
 
     if (messageDecode == "1") {
         cout << "Erreur : la récupération du message a échoué." << endl;

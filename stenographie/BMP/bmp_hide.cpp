@@ -1,4 +1,4 @@
-#include "bmp_convert.h"
+#include "bmp_hide.h"
 #include "../utils/utils_bin.h"
 #include <iostream>
 #include <fstream>
@@ -11,20 +11,11 @@
 #include "../utils/encrypt/encrypt.h"
 using namespace std;
 
-void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos, string key)
+void bmpHide(string inputPath, string fileToHide, string outputPath, int bitPos, string key)
 {
     string binFile, messageBinaire, signatureBinaire;
 
     unsigned char mask;
-
-    //CHIFFREMENT DU MESSAGE
-    // Lire le contenu du fichier en tant que string (clair)
-    ifstream fileToHideStream(fileToHide, ios::binary);
-    string plainContent((istreambuf_iterator<char>(fileToHideStream)), istreambuf_iterator<char>());
-    fileToHideStream.close();
-
-    binFile = lireFichierKey(fileToHide, key);
-
     // Vérification des variables
     ifstream file(inputPath, std::ios::binary);
     if (!file)
@@ -32,6 +23,22 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
         cerr << "Erreur : impossible d'ouvrir " << inputPath << std::endl;
         return;
     }
+    // Essayer d’ouvrir fileToHide comme un fichier
+    ifstream fileToHideStream(fileToHide, ios::binary);
+
+    string plainContent;
+    if (fileToHideStream) {
+        // fileToHide est un fichier -> lire contenu
+        plainContent.assign((istreambuf_iterator<char>(fileToHideStream)),
+                             istreambuf_iterator<char>());
+        fileToHideStream.close();
+    } else {
+        // ce n'est PAS un fichier -> utiliser comme message directement
+        plainContent = fileToHide;
+    }
+
+    // IMPORTANT : envoyer le contenu à lireFichierKey, pas le nom du fichier
+    binFile = lireFichierKey(plainContent, key);
 
     // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
     vector<unsigned char> data((std::istreambuf_iterator<char>(file)),

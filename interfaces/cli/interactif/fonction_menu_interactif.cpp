@@ -3,8 +3,8 @@
 #include "../../../stenographie/PNG/png_hide_image.h"
 #include "../../../stenographie/PNG/png_extract.h"
 #include "../../../stenographie/utils/analysis/image_analysis.hpp"
-#include "../../../stenographie/BMP/bmp_convert.h"
-#include "../../../stenographie/BMP/bmp_recuperation.h"
+#include "../../../stenographie/BMP/bmp_hide.h"
+#include "../../../stenographie/BMP/bmp_extract.h"
 #include "../../../stenographie/utils/utils_bin.h"
 #include "../../../stenographie/utils/encrypt/encrypt.h"
 #include <cstdlib>
@@ -170,7 +170,7 @@ static int menuCacherTexte()
     if (formatExt == ".bmp")
     {
         // Utiliser bmp_convert pour BMP
-        bmpConvert(carrierPath, message, outPath, 0, key); // bitPos = 0 par défaut
+        bmpHide(carrierPath, message, outPath, 0, key); // bitPos = 0 par défaut
     }
     else
     {
@@ -260,7 +260,7 @@ static int menuCacherImage()
     if (formatExt == ".bmp")
     {
         // Pour BMP, utiliser bmp_convert avec l'image secrète comme "fichier à cacher"
-        bmpConvert(carrierPath, secretPath, outPath, 0, key); // bitPos = 0 par défaut
+        bmpHide(carrierPath, secretPath, outPath, 0, key); // bitPos = 0 par défaut
     }
     else
     {
@@ -340,7 +340,7 @@ static int menuExtraire()
             cout << "Clé (hex) utilisée lors du cachage : ";
             getline(cin, key);
             key = cleanPath(key);
-            string result = bmpRecup(inputPath, 0, key); // bitPos = 0 par défaut
+            string result = bmpExtract(inputPath, 0, key); // bitPos = 0 par défaut
         }
         else
         {
@@ -386,7 +386,7 @@ static int menuExtraire()
             getline(cin, key);
             key = cleanPath(key);
 
-            string result = bmpRecup(inputPath, 0, key); // bitPos = 0 par défaut
+            string result = bmpExtract(inputPath, 0, key); // bitPos = 0 par défaut
         }
         else
         {

@@ -1,4 +1,4 @@
-#include "bmp_recuperation.h"
+#include "bmp_extract.h"
 #include "../utils/utils_bin.h"
 #include "../utils/encrypt/encrypt.h"
 
@@ -11,7 +11,7 @@
 
 using namespace std;
 
-string bmpRecup(const string& inputPath, int bitPos, const string& key)
+string bmpExtract(const string& inputPath, int bitPos, const string& key)
 {
     // --- Ouverture du fichier ---
     ifstream file(inputPath, ios::binary);
