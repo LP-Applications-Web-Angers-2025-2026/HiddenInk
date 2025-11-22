@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="hiddenInk.webp" alt="HiddenInk Logo" width="250">
+  <img src="hiddenInk.webp" alt="HiddenInk Logo" width="350">
 </p>
 
 # HiddenInk
@@ -109,5 +109,5 @@ Suivez ensuite les instructions à l'écran.
 
 ## Auteurs
 
-Mathéo Perodeau, Alban Pouchon
+Mathéo Perodeau, Alban Pouchon,
 Vincent Gamblin, Lucas Strullu
