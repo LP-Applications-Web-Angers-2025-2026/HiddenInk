@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.webp" alt="HiddenInk Logo" width="250">
+  <img src="hiddenInk.webp" alt="HiddenInk Logo" width="250">
 </p>
 
 # HiddenInk
