@@ -4,7 +4,7 @@
 
 # HiddenInk
 
-HiddenInk est un outil de stéganographie avancé écrit en C++ (C++20). Il permet de dissimuler du texte ou des images à l'intérieur d'images BMP et PNG, avec des options de chiffrement et d'analyse.
+HiddenInk est un outil de stéganographie écrit en C++. Il permet de dissimuler du texte ou des images à l'intérieur d'images BMP et PNG, avec des options de chiffrement et d'analyse.
 
 ## Fonctionnalités
 
