@@ -1,198 +1,113 @@
-# HiddenInk 🖼️🔒
+<p align="center">
+  <img src="logo.webp" alt="HiddenInk Logo" width="250">
+</p>
 
-Application C++ de stéganographie avancée permettant de cacher et extraire des images et des messages textes dans des images PNG, avec des outils d'analyse.
+# HiddenInk
 
-## ✨ Fonctionnalités
+HiddenInk est un outil de stéganographie avancé écrit en C++ (C++20). Il permet de dissimuler du texte ou des images à l'intérieur d'images BMP et PNG, avec des options de chiffrement et d'analyse.
 
-### 🖼️ Image-in-Image
-- **Cacher une image** dans une autre image
-- **Extraire une image** cachée
-- Détection automatique des paramètres d'encodage
-- Redimensionnement automatique avec interpolation bilinéaire
-- Limite stricte de 2 bits/canal pour préserver la qualité visuelle
+## Fonctionnalités
 
-### 📝 Text-in-Image
-- **Cacher un message texte** dans une image
-- **Extraire un message texte** avec validation
-- Détection automatique du nombre de bits utilisés
-- Gestion des capacités et statistiques d'utilisation
+- **Dissimulation (Hide)** : Cacher un fichier texte ou une image dans une image porteuse (BMP ou PNG).
+- **Extraction (Extract)** : Récupérer les données cachées d'une image stéganographiée.
+- **Chiffrement** : Option pour chiffrer les données cachées avec une clé générée automatiquement.
+- **Choix du bit** : Possibilité de choisir le plan de bit (1-8) utilisé pour la dissimulation (LSB par défaut).
+- **Analyse** : Génération d'histogrammes pour analyser les images.
+- **Mode Interactif** : Un menu convivial pour guider l'utilisateur à travers les différentes opérations.
 
-### 🔍 Analyse d'Images
-- **Comparaison MSE/PSNR** entre image originale et stéganographiée
-- **Analyse d'histogramme** par canal (RGB/RGBA)
-- **Détection de stéganographie** via analyse des LSB
-- Statistiques détaillées (min, max, moyenne, écart-type)
+## Prérequis
 
-## 🛠️ Compilation
+- Compilateur C++ compatible C++20 (GCC, Clang, MSVC).
+- [CMake](https://cmake.org/) (version 3.10 ou supérieure recommandée).
+
+## Installation et Compilation
+
+Vous pouvez compiler le projet en utilisant les scripts fournis ou manuellement avec CMake.
+
+### Via les scripts de build
+
+**Windows (PowerShell) :**
+```powershell
+./build.ps1
+```
+
+**Linux / macOS (Bash) :**
+```bash
+./build.sh
+```
+
+### Compilation manuelle avec CMake
 
 ```bash
-mkdir build && cd build
+mkdir build
+cd build
 cmake ..
-make
+cmake --build .
 ```
 
-## 🚀 Utilisation
+L'exécutable `HiddenInk` (ou `HiddenInk.exe` sur Windows) sera généré.
 
-### Mode interactif
+## Utilisation
 
-Lancez simplement le programme sans arguments :
+Le programme peut être utilisé en ligne de commande (CLI) ou via un mode interactif.
+
+### Mode Interactif
+
+Lancez simplement l'exécutable sans arguments ou avec l'argument `INTERACT` :
 
 ```bash
-./main
+./HiddenInk INTERACT
 ```
+Suivez ensuite les instructions à l'écran.
 
-Vous verrez alors un menu avec 7 options :
-1. Cacher une image dans une image
-2. Extraire une image cachée
-3. Cacher un message texte dans une image
-4. Extraire un message texte
-5. Comparer deux images (MSE/PSNR)
-6. Analyser l'histogramme d'une image
-7. Détecter une éventuelle stéganographie
+### Ligne de Commande (CLI)
 
-### Mode ligne de commande
-
-#### Cacher une image
-```bash
-./main hide-image carrier.png secret.png output.png
-```
-
-#### Extraire une image
-```bash
-./main extract-image stego.png extracted.png
-```
-
-#### Cacher un texte
-```bash
-./main hide-text carrier.png "Mon message secret" output.png
-```
-
-#### Extraire un texte
-```bash
-./main extract-text stego.png
-```
-
-#### Comparer deux images
-```bash
-./main compare original.png stego.png
-```
-
-Affiche :
-- MSE (Mean Squared Error)
-- PSNR (Peak Signal-to-Noise Ratio)
-- Pourcentage de pixels modifiés
-- Interprétation de la qualité
-
-#### Analyser l'histogramme
-```bash
-./main histogram image.png
-```
-
-Affiche :
-- Distribution des valeurs par canal
-- Statistiques (min, max, moyenne, écart-type)
-- Top 5 des valeurs les plus fréquentes
-
-#### Détecter la stéganographie
-```bash
-./main detect image.png
-```
-
-Analyse la distribution des LSB pour détecter d'éventuelles anomalies.
-
-## 📋 Exemples d'utilisation
-
-### Exemple complet : Image-in-Image
+#### Cacher des données (HIDE)
 
 ```bash
-# 1. Cacher une image
-./main hide-image photos/beach.png photos/cat.png output/stego.png
-
-# 2. Comparer l'original et le stego
-./main compare photos/beach.png output/stego.png
-
-# 3. Extraire l'image cachée
-./main extract-image output/stego.png output/recovered.png
-
-# 4. Vérifier que l'extraction est correcte
-./main compare photos/cat.png output/recovered.png
+./HiddenInk HIDE <input_bmp> <file_to_hide> <output_bmp> <encrypt> [bit_position]
 ```
 
-### Exemple complet : Text-in-Image
+- `<input_bmp>` : Chemin de l'image source.
+- `<file_to_hide>` : Chemin du fichier à cacher.
+- `<output_bmp>` : Chemin de l'image de sortie.
+- `<encrypt>` : `o` pour activer le chiffrement (génère une clé), `n` pour désactiver.
+- `[bit_position]` : (Optionnel) Le bit à utiliser (1-8). Défaut : 1 (LSB).
+
+**Exemple :**
+```bash
+./HiddenInk HIDE image.bmp secret.txt image_steg.bmp o 1
+```
+
+#### Extraire des données (EXTRACT)
 
 ```bash
-# 1. Cacher un message
-./main hide-text photo.png "Rendez-vous à minuit!" output/stego.png
-
-# 2. Analyser l'image produite
-./main histogram output/stego.png
-./main detect output/stego.png
-
-# 3. Extraire le message
-./main extract-text output/stego.png
+./HiddenInk EXTRACT <input_bmp> [key] [bit_position]
 ```
 
-## 🔧 Détails techniques
+- `<input_bmp>` : Chemin de l'image contenant les données cachées.
+- `[key]` : (Optionnel) La clé de déchiffrement (si chiffré).
+- `[bit_position]` : (Optionnel) Le bit utilisé (1-8).
 
-### Méthode de stéganographie
-
-- **LSB (Least Significant Bit)** : Les données sont cachées dans les bits de poids faible des pixels
-- **Signature** : Chaque type de contenu a sa signature unique
-  - Image : `!#@!`
-  - Texte : `!#TEXT#!`
-- **Balises** : Délimitent le contenu (`~{&` et `&}~`)
-- **Auto-détection** : Le programme détecte automatiquement le nombre de bits utilisés (1-8)
-- **Limite de qualité** : Maximum 2 bits/canal pour éviter les artefacts visibles
-
-### Format d'encodage
-
-#### Image-in-Image
-```
-[Signature] [Balise ouvrante] [Header 96 bits] [Données image] [Balise fermante]
+**Exemple :**
+```bash
+./HiddenInk EXTRACT image_steg.bmp ma_cle_secrete 1
 ```
 
-Header (96 bits) :
-- 32 bits : largeur
-- 32 bits : hauteur
-- 32 bits : nombre de canaux
+#### Analyser une image (HISTO)
 
-#### Text-in-Image
-```
-[Signature] [Balise ouvrante] [Longueur message] [Message binaire] [Balise fermante]
+```bash
+./HiddenInk HISTO <input_bmp>
 ```
 
-### Métriques de qualité
+## Structure du Projet
 
-#### MSE (Mean Squared Error)
-- MSE = 0 : Images identiques
-- MSE < 1 : Différence imperceptible
-- MSE < 10 : Excellente qualité
+- `main.cpp` : Point d'entrée du programme.
+- `stenographie/` : Cœur du moteur de stéganographie (BMP, PNG, Utils).
+- `interfaces/` : Gestion de l'interface utilisateur (CLI et menus).
+- `docs/` : Documentation supplémentaire.
 
-#### PSNR (Peak Signal-to-Noise Ratio)
-- PSNR > 50 dB : Imperceptible
-- PSNR > 40 dB : Excellente qualité
-- PSNR > 30 dB : Bonne qualité
-- PSNR < 30 dB : Qualité dégradée
+## Auteurs
 
-## 📁 Structure du projet
-
-```
-HiddenInk/
-├── main.cpp                      # Point d'entrée (CLI + mode interactif)
-├── stegano_imageinimage.hpp      # Stéganographie image-in-image
-├── stegano_text.hpp              # Stéganographie text-in-image
-├── image_analysis.hpp            # Outils d'analyse (MSE, histogramme, détection)
-├── stb_image.h                   # Bibliothèque de lecture d'images
-├── stb_image_write.h             # Bibliothèque d'écriture d'images
-├── stb_impl.cpp                  # Implémentation STB
-└── CMakeLists.txt                # Configuration CMake
-```
-
-## 📄 Licence
-
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-## 🙏 Remerciements
-
-- [STB Libraries](https://github.com/nothings/stb) pour la gestion des images
-
+Mathéo Perodeau, Alban Pouchon
+Vincent Gamblin, Lucas Strullu
