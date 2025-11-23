@@ -1,0 +1,14 @@
+debug/main.o
+debug/mainwindow.o
+debug/png_hide_text.o
+debug/png_hide_image.o
+debug/png_extract.o
+debug/bmp_convert.o
+debug/bmp_Recuperation.o
+debug/utils_bin.o
+debug/encrypt.o
+debug/histogram.o
+debug/stb_impl.o
+debug/qrc_resources.o
+debug/moc_mainwindow.o
+debug/moc_histogramwidget.o

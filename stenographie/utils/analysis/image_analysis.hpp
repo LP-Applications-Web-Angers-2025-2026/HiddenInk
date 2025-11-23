@@ -47,12 +47,12 @@ inline void compareImages(const string& path1, const string& path2)
 
     if (!img1)
     {
-        cerr << "❌ Impossible de charger : " << path1 << "\n";
+        cerr << " Impossible de charger : " << path1 << "\n";
         return;
     }
     if (!img2)
     {
-        cerr << "❌ Impossible de charger : " << path2 << "\n";
+        cerr << " Impossible de charger : " << path2 << "\n";
         stbi_image_free(img1);
         return;
     }
@@ -62,7 +62,7 @@ inline void compareImages(const string& path1, const string& path2)
     // Vérifier les dimensions
     if (w1 != w2 || h1 != h2 || c1 != c2)
     {
-        cout << "⚠️  Les images ont des dimensions différentes !\n";
+        cout << "  Les images ont des dimensions différentes !\n";
         cout << "   Image 1 : " << w1 << "x" << h1 << " (" << c1 << " canaux)\n";
         cout << "   Image 2 : " << w2 << "x" << h2 << " (" << c2 << " canaux)\n";
         stbi_image_free(img1);
@@ -70,19 +70,19 @@ inline void compareImages(const string& path1, const string& path2)
         return;
     }
 
-    cout << "📐 Dimensions : " << w1 << "x" << h1 << " (" << c1 << " canaux)\n\n";
+    cout << " Dimensions : " << w1 << "x" << h1 << " (" << c1 << " canaux)\n\n";
 
     // Calculer MSE
     double mse = calculateMSE(img1, img2, w1, h1, c1);
     double psnr = calculatePSNR(mse);
 
-    cout << "📊 MÉTRIQUES DE QUALITÉ :\n";
+    cout << " MÉTRIQUES DE QUALITÉ :\n";
     cout << "   MSE (Mean Squared Error) : " << fixed << setprecision(4) << mse << "\n";
     cout << "   PSNR (Peak Signal-to-Noise Ratio) : ";
 
     if (isinf(psnr))
     {
-        cout << "∞ dB (images identiques)\n";
+        cout << " dB (images identiques)\n";
     }
     else
     {
@@ -90,30 +90,30 @@ inline void compareImages(const string& path1, const string& path2)
     }
 
     // Interprétation
-    cout << "\n💡 INTERPRÉTATION :\n";
+    cout << "\n INTERPRÉTATION :\n";
     if (mse == 0.0)
     {
-        cout << "   ✅ Les images sont IDENTIQUES (pixel par pixel)\n";
+        cout << "    Les images sont IDENTIQUES (pixel par pixel)\n";
     }
     else if (psnr > 50)
     {
-        cout << "   ✅ Différence IMPERCEPTIBLE à l'œil nu\n";
+        cout << "    Différence IMPERCEPTIBLE à l'œil nu\n";
     }
     else if (psnr > 40)
     {
-        cout << "   ✅ Excellente qualité, différence très difficile à percevoir\n";
+        cout << "    Excellente qualite, différence très difficile à percevoir\n";
     }
     else if (psnr > 30)
     {
-        cout << "   ⚠️  Bonne qualité, différence légèrement visible\n";
+        cout << "     Bonne qualite, différence légèrement visible\n";
     }
     else if (psnr > 20)
     {
-        cout << "   ⚠️  Qualité moyenne, différence visible\n";
+        cout << "     Qualite moyenne, différence visible\n";
     }
     else
     {
-        cout << "   ❌ Qualité faible, différence très visible\n";
+        cout << "    Qualite faible, différence très visible\n";
     }
 
     // Calculer le pourcentage de pixels modifiés
@@ -146,12 +146,12 @@ inline void generateHistogram(const string& path)
 
     if (!img)
     {
-        cerr << "❌ Impossible de charger : " << path << "\n";
+        cerr << " Impossible de charger : " << path << "\n";
         return;
     }
 
-    cout << "\n=== ANALYSE FRÉQUENTIELLE (HISTOGRAMME) ===\n\n";
-    cout << "📐 Dimensions : " << w << "x" << h << " (" << c << " canaux)\n\n";
+    cout << "\n ANALYSE FRÉQUENTIELLE (HISTOGRAMME)\n\n";
+    cout << " Dimensions : " << w << "x" << h << " (" << c << " canaux)\n\n";
 
     // Créer les histogrammes pour chaque canal
     vector<vector<int>> histograms(c, vector<int>(256, 0));
@@ -180,7 +180,7 @@ inline void generateHistogram(const string& path)
     // Afficher les statistiques par canal
     for (int ch = 0; ch < c; ++ch)
     {
-        cout << "📊 CANAL " << channelNames[ch] << " :\n";
+        cout << " CANAL " << channelNames[ch] << " :\n";
 
         // Calculer min, max, moyenne
         minVal = 0, maxVal = 0;
@@ -251,11 +251,11 @@ inline void analyzeImageForSteganography(const string& path)
 
     if (!img)
     {
-        cerr << "❌ Impossible de charger : " << path << "\n";
+        cerr << " Impossible de charger : " << path << "\n";
         return;
     }
 
-    cout << "\n=== ANALYSE DE STÉGANOGRAPHIE ===\n\n";
+    cout << "\n ANALYSE DE STÉGANOGRAPHIE \n\n";
 
     // Analyser la distribution des LSB (Least Significant Bits)
     int lsbCounts[2] = {0, 0}; // Compte des 0 et 1 dans les LSB
@@ -267,25 +267,25 @@ inline void analyzeImageForSteganography(const string& path)
 
     ratio = (double)lsbCounts[1] / (lsbCounts[0] + lsbCounts[1]);
 
-    cout << "📊 Distribution des LSB (Least Significant Bits) :\n";
+    cout << " Distribution des LSB (Least Significant Bits) :\n";
     cout << "   Bits à 0 : " << lsbCounts[0] << " (" << fixed << setprecision(2) << (lsbCounts[0] * 100.0 / (w * h * c))
         << "%)\n";
     cout << "   Bits à 1 : " << lsbCounts[1] << " (" << fixed << setprecision(2) << (lsbCounts[1] * 100.0 / (w * h * c))
         << "%)\n";
     cout << "   Ratio : " << fixed << setprecision(4) << ratio << "\n\n";
 
-    cout << "💡 INTERPRÉTATION :\n";
+    cout << " INTERPRÉTATION :\n";
     if (abs(ratio - 0.5) < 0.01)
     {
-        cout << "   ✅ Distribution équilibrée (~50/50) - Naturelle ou stéganographie bien faite\n";
+        cout << "    Distribution équilibrée (~50/50) - Naturelle ou stéganographie bien faite\n";
     }
     else if (abs(ratio - 0.5) < 0.05)
     {
-        cout << "   ⚠️  Distribution légèrement déséquilibrée - Possible stéganographie\n";
+        cout << "     Distribution légèrement déséquilibrée - Possible stéganographie\n";
     }
     else
     {
-        cout << "   ⚠️  Distribution déséquilibrée - Suspect, mais peut être naturel\n";
+        cout << "     Distribution déséquilibrée - Suspect, mais peut être naturel\n";
     }
 
     cout << "\n   Note : Cette analyse n'est qu'indicative. Une image naturelle peut aussi\n";
