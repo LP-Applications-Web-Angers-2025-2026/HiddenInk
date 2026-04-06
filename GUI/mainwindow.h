@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QString>
+#include <QSize>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,28 +21,42 @@ private slots:
     void ouvrirImage();
     void quitter();
 
-    // Stéganographie – Cachage
+    // PNG – Cachage
     void cacherTexte();
     void cacherImage();
 
-    // Stéganographie – Extraction
+    // PNG – Extraction
     void extraireTexte();
     void extraireImage();
 
-    // Analyse
+    // BMP
+    void cacherBMP();
+    void extraireBMP();
+
+    // WAV
+    void cacherWAV();
+    void extraireWAV();
+
+    // Analyse classique
     void comparerImages();
     void genererHistogramme();
     void detecterStegano();
 
-    // Utilitaires
+    // Stéganalyse avancée
+    void analyserEntropie();
+    void detecterPayload();
+
+    // Outils
     void genererCle();
+    void copierCle();
     void effacerJournal();
     void afficherAide();
 
 private:
     Ui::MainWindow *ui;
     QString derniereImageChargee;
-    QString cleCouranteHex; // clé hex affichée
+    QString cleCouranteHex;
+
     void logMessage(const QString &msg);
     QString choisirFichier(const QString &titre, const QString &filtre);
     QString sauverFichier(const QString &titre, const QString &filtre);
@@ -48,10 +64,21 @@ private:
     void appliquerStyle();
     void initialiserMenus();
     void initialiserOnglets();
-    // Helpers cachage image
-    QString preparerImageSecreteRedimensionnee(const QString &secretPath, const QString &carrierPath, int bits, QString &info);
-    int calculerCapaciteMax(const QSize &carrierSize, int bits);
-    int tailleImagePixels(const QSize &secretSize);
+
+    // Helpers image secrète PNG
+    QString preparerImageSecreteRedimensionnee(const QString &secretPath,
+                                               const QString &carrierPath,
+                                               int bits, QString &info);
+    int  calculerCapaciteMax(const QSize &carrierSize, int bits);
+    int  tailleImagePixels(const QSize &secretSize);
+
+    // Auto-suggestion chemin de sortie
+    QString suggererCheminSortie(const QString &sourcePath,
+                                 const QString &suffixe,
+                                 const QString &ext);
+
+    // Détection payload sur un fichier extrait (affiché dans le log + analysisOutput)
+    void afficherResultatPayload(const QString &filePath);
 };
 
 #endif // MAINWINDOW_H

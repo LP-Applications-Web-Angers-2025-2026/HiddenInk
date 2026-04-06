@@ -1,12 +1,10 @@
 #ifndef HIDDENINK_BMP_STEG_H
 #define HIDDENINK_BMP_STEG_H
 
-#include <iostream>
-#include <ostream>
+#include <string>
 #include <vector>
 
-using namespace std;
-
 // Déclaration de la fonction (prototype)
-void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitPos, string key);
+void bmpConvert(std::string inputPath, std::string fileToHide, std::string outputPath, int bitPos, std::string key);
+
 #endif //HIDDENINK_BMP_STEG_H

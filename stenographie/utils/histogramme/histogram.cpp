@@ -35,7 +35,7 @@ vector<int> histogramme(const vector<unsigned char>& imageData, size_t headerSiz
 // Afficher l'histogramme en console
 void printHistogram(const vector<int>& histo) {
     cout << "Histogramme des valeurs de pixel :" << endl;
-    for (int i = 0; i < histo.size(); i++) {
+    for (size_t i = 0; i < histo.size(); i++) {
         cout << i << ": " << " (" << histo[i] << ")" << endl;
     }
 }

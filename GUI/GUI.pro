@@ -1,5 +1,9 @@
 QT += widgets
-CONFIG += c++17
+CONFIG += c++20
+
+# libGL.so existe dans le dossier CMakeFiles du build CMake — on pointe le linker dessus
+unix: LIBS += -L$$PWD/../build/CMakeFiles
+
 
 SOURCES += \
     main.cpp \
@@ -24,6 +28,7 @@ SOURCES += \
     ../stenographie/PNG/png_extract.cpp \
     ../stenographie/BMP/bmp_convert.cpp \
     ../stenographie/BMP/bmp_Recuperation.cpp \
+    ../stenographie/WAV/wav_hide.cpp \
     ../stenographie/utils/utils_bin.cpp \
     ../stenographie/utils/encrypt/encrypt.cpp \
     ../stenographie/utils/histogramme/histogram.cpp \
@@ -35,6 +40,7 @@ HEADERS += \
     ../stenographie/PNG/png_extract.h \
     ../stenographie/BMP/bmp_convert.h \
     ../stenographie/BMP/bmp_Recuperation.h \
+    ../stenographie/WAV/wav_hide.h \
     ../stenographie/utils/analysis/image_analysis.hpp \
     ../stenographie/utils/histogramme/histogram.h \
     ../stenographie/utils/encrypt/encrypt.h \

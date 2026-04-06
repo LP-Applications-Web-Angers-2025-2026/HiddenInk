@@ -11,7 +11,7 @@
 
 using namespace std;
 
-string bmpRecup(const string& inputPath, int bitPos, const string& key)
+string bmpRecup(const string& inputPath, int bitPos, const string& key, const string& outputPath)
 {
     // --- Ouverture du fichier ---
     ifstream file(inputPath, ios::binary);
@@ -87,13 +87,12 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
         // Conversion de la clé hex en bytes
         byteKey = hex_to_key(key);
 
-        // Déchiffrement si clé fournie 
+        // Déchiffrement si clé fournie
         messageBinaire = xor_encrypt(cipher, byteKey);
     }
     else
     {
         messageBinaire = cipher;
-        cout << messageBinaire << endl;
     }
     //--- FIN DECHIFFREMENT DU MESSAGE ---
 
@@ -115,8 +114,8 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
     }
 
     // --- Sauvegarde du contenu extrait ---
-    const string outputPath = "./fichier_extrait" + extension;
-    ofstream outFile(outputPath, ios::binary);
+    const string effectiveOutput = outputPath.empty() ? "./fichier_extrait" + extension : outputPath;
+    ofstream outFile(effectiveOutput, ios::binary);
     if (!outFile)
     {
         return "4";
@@ -131,5 +130,5 @@ string bmpRecup(const string& inputPath, int bitPos, const string& key)
         std::string(extension == ".txt"
                         ? "Texte"
                         : (extension == ".png" ? "Image PNG" : "Image BMP")) +
-        " extrait(e) avec succès dans " + outputPath;
+        " extrait(e) avec succès dans " + effectiveOutput;
 }

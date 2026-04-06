@@ -63,7 +63,7 @@ inline int detectTextBitsPerChannel(unsigned char* carrier, int cw, int ch, int 
 // Cacher un message texte dans une image
 inline vector<unsigned char> hideTextInImage(unsigned char* carrier, int cw, int ch, int cc,
                                              const string& message, int bitsPerChannel = 0,
-                                             const string& key = "")
+                                             [[maybe_unused]] const string& key = "")
 {
     // Si bitsPerChannel = 0, calculer automatiquement le minimum nécessaire
     if (bitsPerChannel == 0) {

@@ -6,7 +6,6 @@
 #include <bitset>
 #include <cctype>
 #include <filesystem>
-#include <pstl/parallel_backend_utils.h>
 
 #include "../utils/encrypt/encrypt.h"
 using namespace std;
@@ -36,7 +35,7 @@ void bmpConvert(string inputPath, string fileToHide, string outputPath, int bitP
     // Ce code C++ permet de lire l'intégralité d'un fichier en mémoire en une seule instruction.
     vector<unsigned char> data((std::istreambuf_iterator<char>(file)),
                                std::istreambuf_iterator<char>());
-    // Femeture du fichier
+    // Fermeture du fichier
     file.close();
 
     // Taille du header & de la signature

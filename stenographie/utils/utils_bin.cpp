@@ -248,10 +248,10 @@ bool ouvrirfichierSource(string inputPath)
     if (!file.is_open())
     {
         cout << "[HiddenInk] Erreur : le fichier image ne s'ouvre pas !" << inputPath << std::endl;
-        // Femeture du fichier
+        // Fermeture du fichier
         return false;
     }
-    // Femeture du fichier
+    // Fermeture du fichier
     file.close();
     return true;
 }
@@ -267,9 +267,9 @@ bool ouvrirfichierMessage(string fileToHide)
     if (!file.is_open())
     {
         cout << "[HiddenInk] Erreur : le fichier image ne s'ouvre pas !" << fileToHide << endl;
-        return false; // Femeture du fichier
+        return false; // Fermeture du fichier
     }
-    // Femeture du fichier
+    // Fermeture du fichier
     file.close();
     return true;
 }
@@ -310,28 +310,25 @@ bool VerifFichier(string fichier)
  * cacher ou extraire des images et du texte, comparer des images, analyser des histogrammes et
  * détecter la présence de stéganographie.
  */
-// TODO : METTRE A JOUR
 void afficherAide()
 {
-    std::cout << "=== STEGANOGRAPHIE AVANCEE ===\n\n";
+    std::cout << "=== HIDDENINK - STEGANOGRAPHIE AVANCEE ===\n\n";
     std::cout << "Usage:\n";
-    std::cout << "  Mode interactif : ./main\n";
-    std::cout << "  Mode démonstration : ./main demo\n\n";
-    std::cout << "  Cacher une image : ./main hide-image <image_porteuse> <image_secrete> <sortie.png>\n";
-    std::cout << "  Extraire une image : ./main extract-image <image_avec_secret> <sortie.png>\n\n";
-    std::cout << "  Cacher un texte : ./main hide-text <image_porteuse> <message> <sortie.png>\n";
-    std::cout << "  Extraire un texte : ./main extract-text <image_avec_secret> [sortie.txt]\n\n";
-    std::cout << "  Comparer deux images : ./main compare <image1> <image2>\n";
-    std::cout << "  Analyser histogramme : ./main histogram <image>\n";
-    std::cout << "  Détecter stéganographie : ./main detect <image>\n\n";
+    std::cout << "  Mode interactif : ./HiddenInk INTERACT\n\n";
+    std::cout << "  Cacher un fichier (BMP) :\n";
+    std::cout << "    ./HiddenInk HIDE <image.bmp> <fichier_a_cacher> <sortie.bmp> <bit_pos(1-8)> [cle_hex]\n\n";
+    std::cout << "  Extraire un fichier (BMP) :\n";
+    std::cout << "    ./HiddenInk EXTRACT <image.bmp> <bit_pos(1-8)> [cle_hex]\n\n";
+    std::cout << "  Générer un histogramme :\n";
+    std::cout << "    ./HiddenInk HISTO <image.bmp>\n\n";
     std::cout << "Exemples:\n";
-    std::cout << "  ./main hide-image carrier.png secret.png output.png\n";
-    std::cout << "  ./main extract-image output.png extracted.png\n";
-    std::cout << "  ./main hide-text carrier.png \"Mon message secret\" output.png\n";
-    std::cout << "  ./main extract-text output.png message.txt\n";
-    std::cout << "  ./main compare original.png stego.png\n";
-    std::cout << "  ./main histogram image.png\n\n";
-    std::cout << "Note: Le nombre de bits par canal est détecté automatiquement.\n";
-    std::cout << "      Pour extract-text, le fichier .txt est optionnel (affichage uniquement si omis).\n";
+    std::cout << "  ./HiddenInk HIDE carrier.bmp secret.txt output.bmp 1\n";
+    std::cout << "  ./HiddenInk HIDE carrier.bmp secret.png output.bmp 2 aabbccdd\n";
+    std::cout << "  ./HiddenInk EXTRACT output.bmp 1\n";
+    std::cout << "  ./HiddenInk EXTRACT output.bmp 2 aabbccdd\n";
+    std::cout << "  ./HiddenInk HISTO image.bmp\n\n";
+    std::cout << "  Pour PNG (mode interactif) : ./HiddenInk INTERACT\n\n";
+    std::cout << "Note: bit_pos entre 1 et 8 (1 = LSB, qualité maximale).\n";
+    std::cout << "      Pour les opérations PNG, utilisez le mode INTERACT ou le GUI.\n";
 }
 
